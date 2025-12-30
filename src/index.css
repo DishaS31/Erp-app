@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+body{
+    font-family: "Nunito", sans-serif;
+}
+
+
+:root {
+  --color-primary: 37 176 3;      /* #25B003 */
+  --color-secondary: 85 85 85;    /* #555555 */
+  --color-bg: 245 247 250;        /* #F5F7FA */
+}
+
+/* 🔹 RED THEME */
+[data-theme="red"] {
+  --color-primary: 220 38 38;
+  --color-secondary: 75 85 99;
+  --color-bg: 254 242 242;
+}
+
+/* 🔹 BLUE THEME */
+[data-theme="blue"] {
+  --color-primary: 37 99 235;
+  --color-secondary: 30 58 138;
+  --color-bg: 239 246 255;
+}
+
+/* 🔹 PURPLE THEME */
+[data-theme="purple"] {
+  --color-primary: 168 85 247;
+  --color-secondary: 88 28 135;
+  --color-bg: 250 245 255;
+}
+@layer utilities {
+  .bg-primary {
+    background-color: rgb(var(--color-primary));
+  }
+
+  .text-primary {
+    color: rgb(var(--color-primary));
+  }
+
+  .bg-secondary {
+    background-color: rgb(var(--color-secondary));
+  }
+
+  .text-secondary {
+    color: rgb(var(--color-secondary));
+  }
+
+  .bg-bg {
+    background-color: rgb(var(--color-bg));
+  }
+}
