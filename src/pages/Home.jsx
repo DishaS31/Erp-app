@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import banner from "../assets/erp-banner.jpg";
-import Footer from "../components/Footer";
+import banner from "../assets/asideimage.jpeg";
 const Home = () => {
   const [activeTab, setActiveTab] = useState("all");
 
