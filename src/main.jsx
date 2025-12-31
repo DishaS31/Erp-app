@@ -3,11 +3,10 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
-
-// 🔥 APPLY SAVED THEME
-const savedTheme = localStorage.getItem("theme") || "default";
-document.documentElement.setAttribute("data-theme", savedTheme);
-
+import { loadTheme } from './utils/theme.js'
+import { loadFontFamily } from './utils/theme.js'
+loadTheme();
+loadFontFamily();
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
