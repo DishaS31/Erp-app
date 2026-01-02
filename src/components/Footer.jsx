@@ -2,9 +2,9 @@ import React from "react";
 const Footer = () => {
   return (
     <footer className="w-full border-t bg-white flex">
-      <div className="flex items-center justify-between px-6 py-3 text-[12px] text-secondary w-full">
+      <div className="flex items-center justify-around px-6 py-0.5 text-[12px]  w-full">
         {/* LEFT */}
-        <p className="py-2 text-lg">
+        <p className="py-2 text-[16px] text-secondary">
           Copyright © 2023{" "}
           <span className="font-semibold">aicountly</span> | All rights reserved
         </p>
@@ -12,7 +12,7 @@ const Footer = () => {
         {/* RIGHT */}
         <a
           href="#"
-          className="hover:text-primary transition font-medium text-sm"
+          className=" transition font-medium text-[16px] text-[#8a94ad]"
         >
           Terms & Conditions
         </a>

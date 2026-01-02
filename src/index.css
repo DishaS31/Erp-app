@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: var(--font-family, "Nunito", sans-serif);
+body{
+    font-family: "Nunito", sans-serif;
 }
+
 
 :root {
   --color-primary: 37 176 3;      /* #25B003 */
@@ -12,26 +13,69 @@ body {
   --color-bg: 245 247 250;        /* #F5F7FA */
 }
 
-/* 🔹 RED THEME */
+/* 🔹 DEFAULT (GREEN) */
+[data-theme="default"] {
+  --color-primary: 37 176 3;        /* #25B003 */
+  --color-secondary: 21 128 61;     /* darker green */
+  --color-bg: 240 253 244;          /* light green bg */
+}
+
+/* 🔹 RED */
 [data-theme="red"] {
-  --color-primary: 220 38 38;
-  --color-secondary: 75 85 99;
-  --color-bg: 254 242 242;
+  --color-primary: 221 0 38;
+  /* --color-secondary: 75 85 99;
+  --color-bg: 254 242 242; */
 }
 
-/* 🔹 BLUE THEME */
-[data-theme="blue"] {
-  --color-primary: 37 99 235;
-  --color-secondary: 30 58 138;
-  --color-bg: 239 246 255;
+/* 🔹 ORANGE */
+[data-theme="orange"] {
+  --color-primary: 236 123 45;
+  /* --color-secondary: 120 53 15;
+  --color-bg: 255 247 237; */
 }
 
-/* 🔹 PURPLE THEME */
+/* 🔹 SKY BLUE */
+[data-theme="sky_blue"] {
+  --color-primary: 47 161 218;
+  /* --color-secondary: 30 64 98;
+  --color-bg: 235 250 255; */
+}
+
+/* 🔹 PURPLE */
 [data-theme="purple"] {
-  --color-primary: 168 85 247;
-  --color-secondary: 88 28 135;
-  --color-bg: 250 245 255;
+  --color-primary: 217 124 248;
+  /* --color-secondary: 88 28 135;
+  --color-bg: 250 245 255; */
 }
+
+/* 🔹 YELLOW */
+[data-theme="yellow"] {
+  --color-primary: 211 176 0;
+  /* --color-secondary: 113 63 18;
+  --color-bg: 254 252 232; */
+}
+
+/* 🔹 LIME */
+[data-theme="lime"] {
+  --color-primary: 162 196 46;
+  /* --color-secondary: 63 98 18;
+  --color-bg: 247 254 231; */
+}
+
+/* 🔹 TEAL */
+[data-theme="teal"] {
+  --color-primary: 91 187 177;
+  /* --color-secondary: 19 78 74;
+  --color-bg: 240 253 250; */
+}
+
+/* 🔹 BLUE */
+[data-theme="blue"] {
+  --color-primary: 56 116 255;
+  /* --color-secondary: 37 99 235;
+  --color-bg: 239 246 255; */
+}
+
 @layer utilities {
   .bg-primary {
     background-color: rgb(var(--color-primary));

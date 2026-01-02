@@ -10,14 +10,15 @@ import { useState } from "react";
 const Header = () => {
 
   const themes = [
-    { key: "red", color: "#DC2626" },
-    { key: "orange", color: "#EA580C" },
-    { key: "blue", color: "#2563EB" },
-    { key: "purple", color: "#A855F7" },
-    { key: "yellow", color: "#CA8A04" },
-    { key: "lime", color: "#65A30D" },
-    { key: "teal", color: "#14B8A6" },
-    { key: "default", color: "#25B003" },
+    { key: "red", color: "#dd0026" },
+    { key: "orange", color: "#ec7b2d" },
+    { key: "sky_blue", color: "#2fa1da" },
+    { key: "purple", color: "#d97cf8" },
+    { key: "yellow", color: "#d3b000" },
+    { key: "lime", color: "#a2c42e" },
+    { key: "teal", color: "#5bbbb1" },
+    { key: "blue", color: "#3874ff" },
+   
   ];
 
   const navItems = [
@@ -55,8 +56,8 @@ const Header = () => {
   // null | "business" | "reset"
 
   return (
-    <header className="w-full bg-white  shadow-sm px-4">
-      <div className="flex items-center justify-between h-16 px-6">
+    <header className="w-full bg-white  border border-[#cbd0dd] shadow-sm px-6">
+      <div className="flex items-center justify-between h-16 px-2">
 
         {/* LEFT - LOGO */}
         <div className="flex items-center">
@@ -81,7 +82,7 @@ const Header = () => {
 
 
         {/* CENTER - NAV ITEMS */}
-        <nav className="flex items-center gap-4 text-[12.8px] font-bold text-secondary">
+        <nav className="flex items-center gap-2 text-tiny font-bold text-secondary">
           {navItems.map((item, index) => (
             <div
               key={index}
@@ -107,7 +108,7 @@ const Header = () => {
                   {item.children.map((child, i) => (
                     <div
                       key={i}
-                      className="px-4 py-2 text-secondary hover:underline hover:text-primary cursor-pointer"
+                      className="px-4 py-2 text-secondary hover:underline hover:text-secondary cursor-pointer"
                     >
                       {child.label}
                     </div>
@@ -123,9 +124,9 @@ const Header = () => {
         <div className="flex items-center gap-4 text-secondary">
 
           {/* Business ID */}
-          <div className="relative flex items-center gap-1 text-[12.8px] font-bold cursor-pointer" onClick={() => setActivePanel(activePanel === "business" ? null : "business")}>
+          <div className="relative flex items-center gap-1 text-tiny font-bold cursor-pointer" onClick={() => setActivePanel(activePanel === "business" ? null : "business")}>
             <span className='italic'>Business ID: N/A</span>
-            <span className="material-symbols-outlined text-base">
+            <span className="material-symbols-outlined ">
               expand_more
             </span>
 
@@ -137,7 +138,7 @@ const Header = () => {
           {actionBtns.map((btn, index) => (
             <span
               key={index}
-              className="material-symbols-outlined cursor-pointer text-[20px] hover:text-primary transition"
+              className="material-symbols-outlined cursor-pointer transition"
               onClick={() =>
                 setActivePanel(activePanel === btn.panel ? null : btn.panel)
               }
@@ -156,24 +157,24 @@ const Header = () => {
         </div>
 
         {activePanel && (
-          <div className="fixed right-0 top-16 w-80 h-[calc(100vh-64px)] bg-white border-l shadow-lg z-40 border-[#cbd0dd]">
-            <div className="p-5">
+          <div className="fixed right-0 top-16 w-96 h-[calc(100vh-64px)] bg-white border-l shadow-lg z-40 border-[#cbd0dd]">
+            <div className="p-5 overflow-y-auto h-full">
 
               {/* BUSINESS PANEL */}
               {activePanel === "business" && (
                 <>
-                  <div className="font-extrabold text-[12.8px] mb-4 text-black">
+                  <div className="font-extrabold text-tiny mb-4 text-black">
                     My Business ID: N/A
                   </div>
 
-                  <button className="w-full border border-primary text-primary rounded-md py-2 text-[12.8px] font-bold hover:bg-primary hover:text-white transition">
+                  <button className="w-full border border-primary text-primary rounded-md py-2 text-tiny font-bold hover:bg-primary hover:text-white transition">
                     Manage Business Account
                   </button>
 
                   <div className="mt-3">
                     <a
                       href="#"
-                      className="block text-[12.8px] text-blue-600 text-center hover:underline font-semibold"
+                      className="block text-tiny text-blue-600 text-center hover:underline font-semibold"
                     >
                       View All Licence
                     </a>
@@ -184,14 +185,14 @@ const Header = () => {
               {/* RESET PANEL */}
               {activePanel === "reset" && (
                 <>
-                  <div className="font-extrabold text-[12.8px] mb-2 text-black">
+                  <div className="font-extrabold text-tiny mb-2 text-black">
                     Recent Activities
                   </div>
 
                   <input
                     type="text"
                     placeholder="Search Settings"
-                    className="w-full border rounded-md px-3 py-2 text-[12.8px] font-semibold outline-none border-[#cbd0dd]"
+                    className="w-full border rounded-md px-3 py-2 text-tiny font-semibold outline-none border-[#cbd0dd]"
                   />
                 </>
               )}
@@ -200,17 +201,21 @@ const Header = () => {
               {activePanel === "settings_suggest" && (
                 <>
                   {/* HEADER */}
-                  <div className="font-extrabold text-[12.8px] mb-4 text-black">
-                    Settings
-                  </div>
+                 
 
                   {/* ================= THEME COLOR ================= */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[12.8px] font-bold text-black">
+                      <span className="text-tiny font-bold text-black">
                         Theme Color
                       </span>
-                      <span className="text-[12px] text-secondary">Default</span>
+                        <span
+                          className="text-tiny text-secondary underline cursor-pointer font-extrabold"
+                          onClick={() => setTheme("default")}
+                        >
+                          Default
+                        </span>
+
                     </div>
 
                     <div className="grid grid-cols-4 gap-3">
@@ -225,67 +230,138 @@ const Header = () => {
                     </div>
                   </div>
 
-                  {/* ================= FONT FAMILY ================= */}
+               {/* ================= FONT FAMILY ================= */}
                   <div className="mb-6">
-                    <div className="text-[12.8px] font-bold text-black mb-2">
-                      Font Family
-                    </div>
-                    <select
-                      onChange={(e) => setFontFamily(e.target.value)}
-                      className="w-full border rounded-md px-3 py-2 text-[12.8px] font-semibold outline-none border-[#cbd0dd]"
-                      defaultValue={localStorage.getItem("font") || "Nunito, sans-serif"}
-                    >
-                      <option value="Nunito, sans-serif">Nunito</option>
-                      <option value="Noto Sans, sans-serif">Noto Sans</option>
-                      <option value="Poppins, sans-serif">Poppins</option>
-                    </select>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-tiny font-bold text-black">
+                        Font Family
+                      </span>
 
+                      <select
+                        onChange={(e) => setFontFamily(e.target.value)}
+                        className="border rounded-md px-3 py-2 text-tiny font-semibold outline-none border-[#cbd0dd] w-40"
+                        defaultValue={localStorage.getItem("font") || "Nunito, sans-serif"}
+                      >
+                        <option value="Nunito, sans-serif">Nunito</option>
+                        <option value="Noto Sans, sans-serif">Noto Sans</option>
+                        <option value="Poppins, sans-serif">Poppins</option>
+                      </select>
+                    </div>
                   </div>
 
                   {/* ================= FONT SIZE ================= */}
                   <div className="mb-6">
-                    <div className="text-[12.8px] font-bold text-black mb-2">
-                      Font Size
-                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-tiny font-bold text-black">
+                        Font Size
+                      </span>
 
-                    <div className="inline-flex border rounded overflow-hidden">
-                      <button
-                        onClick={() =>
-                          document.documentElement.style.setProperty(
-                            "--font-base",
-                            "12.8px"
-                          )
-                        }
-                        className="px-4 py-2 bg-primary text-white text-[12.8px] font-bold"
-                      >
-                        A
-                      </button>
+                      <div className="inline-flex border rounded overflow-hidden">
+                        <button
+                          onClick={() =>
+                            document.documentElement.style.setProperty("--font-base", "12.8px")
+                          }
+                          className="px-4 py-2 bg-primary text-white text-tiny font-bold"
+                        >
+                          A
+                        </button>
 
-                      <button
-                        onClick={() =>
-                          document.documentElement.style.setProperty(
-                            "--font-base",
-                            "14px"
-                          )
-                        }
-                        className="px-4 py-2 border-l text-primary font-bold"
-                      >
-                        A+
-                      </button>
+                        <button
+                          onClick={() =>
+                            document.documentElement.style.setProperty("--font-base", "14px")
+                          }
+                          className="px-4 py-2 border-l text-primary font-bold"
+                        >
+                          A+
+                        </button>
 
-                      <button
-                        onClick={() =>
-                          document.documentElement.style.setProperty(
-                            "--font-base",
-                            "15.5px"
-                          )
-                        }
-                        className="px-4 py-2 border-l text-primary font-bold"
-                      >
-                        A+
-                      </button>
+                        <button
+                          onClick={() =>
+                            document.documentElement.style.setProperty("--font-base", "15.5px")
+                          }
+                          className="px-4 py-2 border-l text-primary font-bold"
+                        >
+                          A+
+                        </button>
+                      </div>
                     </div>
                   </div>
+
+                {/* ================= NOTIFICATION ================= */}
+                  <div className="mb-6 border-t pt-4">
+                    <div className="text-tiny font-bold text-black mb-3">
+                      Notification
+                    </div>
+
+                  {[
+                      "Missed Activity Email",
+                      "Show Preview Message",
+                      "Desktop Notification",
+                      "Sound Notification",
+                    ].map((label, i) => (
+                      <label
+                        key={i}
+                        className="flex items-center gap-3 mb-3 cursor-pointer select-none"
+                      >
+                        {/* real input (hidden) */}
+                        <input
+                          type="checkbox"
+                          className="hidden peer"
+                        />
+
+                        {/* switch */}
+                        <div className="w-9 h-5 rounded-full bg-gray-300 peer-checked:bg-primary relative transition">
+                          <div className="w-4 h-4 bg-white rounded-full absolute top-[2px] left-[2px] transition peer-checked:translate-x-4"></div>
+                        </div>
+
+                        {/* label text */}
+                        <span className="text-secondary text-tiny">{label}</span>
+                      </label>
+                    ))}
+
+                  </div>
+
+
+                  {/* ================= DISPLAY & SOUND ================= */}
+                  <div className="mb-6 border-t pt-4">
+                    <div className="text-tiny font-bold text-black mb-3">
+                      Display & Sound
+                    </div>
+
+                    {/* Notification Sound */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-secondary text-tiny">Notification Sound</span>
+                      <select className="border rounded-md px-3 py-2 text-tiny w-40">
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                      </select>
+                    </div>
+
+                    {/* Audio Device */}
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-secondary text-tiny">Audio Device</span>
+                      <select className="border rounded-md px-3 py-2 text-tiny w-40">
+                        <option>Size 25</option>
+                        <option>Size 30</option>
+                      </select>
+                    </div>
+
+                    {/* Speaker */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-secondary text-tiny">Speaker</span>
+                      <select className="border rounded-md px-3 py-2 text-tiny w-40">
+                        <option>Size 25</option>
+                        <option>Size 30</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <button className="w-full border rounded-md py-2 text-primary font-bold hover:bg-primary hover:text-white transition text-tiny">
+                      View All
+                    </button>
+                  </div>
+
+
                 </>
               )}
 

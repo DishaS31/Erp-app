@@ -10,6 +10,9 @@ export default {
         noto: ["Noto Sans", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
       },
+      fontSize: {
+        tiny: "12.8px",
+      },
     },
   },
   plugins: [],
