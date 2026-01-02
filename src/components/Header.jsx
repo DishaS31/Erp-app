@@ -18,32 +18,36 @@ const Header = () => {
     { key: "lime", color: "#a2c42e" },
     { key: "teal", color: "#5bbbb1" },
     { key: "blue", color: "#3874ff" },
-   
+
   ];
 
   const navItems = [
     {
       iconType: "image",
       icon: homeIcon,
-      path: "",
+      type: "internal",
+      path: "/",
     },
     {
       label: "Company",
-      path: "",
+      type: "internal",
       children: [
-        { label: "Company Access", path: "" },
-        { label: "Recycle Bin", path: "" },
+        { label: "Company Access", path: "/company/access" },
+        { label: "Recycle Bin", path: "/company/recycle-bin" },
       ],
     },
     {
       label: "Manage Users",
-      path: "",
+      type: "external",
+      path: "https://winixindia.in/",
     },
     {
       label: "Contacts",
-      path: "",
+      type: "external",
+      path: "https://tailwindcss.com/",
     },
   ];
+
 
   const actionBtns = [
     { icon: "device_reset", panel: "reset" },
@@ -64,56 +68,64 @@ const Header = () => {
           <img src={logo} alt="Aicountly" className="h-16" />
         </div>
 
-        {/* LEFT BG PANEL */}
-        {/* <div
-          className="fixed left-0 top-16 w-63.25 h-[calc(100vh-64px)] bg-[#003f85] border-r z-30 align-middle"
-        >
-          <div
-            className="w-[95%] h-full overflow-hidden align-middle m-auto"
-            style={{
-              backgroundImage: `url(${banner}`,
-              backgroundSize: "contain",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "top",
-            }}
-          ></div>
-        </div> */}
-
-
-
         {/* CENTER - NAV ITEMS */}
         <nav className="flex items-center gap-2 text-tiny font-bold text-secondary">
           {navItems.map((item, index) => (
             <div
               key={index}
-              className="relative group flex items-center gap-2 cursor-pointer"
+              className="relative group flex items-center gap-2"
             >
-              {/* Home Icon */}
-              {item.iconType === "image" && (
-                <img src={item.icon} alt="Home" />
+              {/* HOME ICON (internal) */}
+              {item.iconType === "image" && item.type === "internal" && (
+                <Link to={item.path}>
+                  <img src={item.icon} alt="Home" className="cursor-pointer" />
+                </Link>
               )}
 
-              {/* Label */}
-              {item.label && (
-                <span className="hover:bg-primary hover:text-white py-1 px-2 transition-all duration-200">
-                  {item.label}
-                </span>
+              {/* LABEL */}
+              {item.label && !item.children && (
+                item.type === "internal" ? (
+                  <Link
+                    to={item.path}
+                    className="hover:bg-primary hover:text-white py-1 px-2 transition-all duration-200"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:bg-primary hover:text-white py-1 px-2 transition-all duration-200"
+                  >
+                    {item.label}
+                  </a>
+                )
               )}
 
-              {/* 🔽 Company Dropdown */}
+              {/* 🔽 COMPANY DROPDOWN (INTERNAL ROUTES ONLY) */}
               {item.children && (
-                <div className="absolute top-full left-0 mt-2 w-40 bg-white  rounded-md shadow-md 
-                              opacity-0 invisible group-hover:opacity-100 group-hover:visible
-                              transition-all duration-200 z-50 py-2 border-[#cbd0dd] border">
-                  {item.children.map((child, i) => (
-                    <div
-                      key={i}
-                      className="px-4 py-2 text-secondary hover:underline hover:text-secondary cursor-pointer"
-                    >
-                      {child.label}
-                    </div>
-                  ))}
-                </div>
+                <>
+                  <span className="hover:bg-primary hover:text-white py-1 px-2 transition-all duration-200 cursor-pointer">
+                    {item.label}
+                  </span>
+
+                  <div
+                    className="absolute top-full left-0 mt-2 w-44 bg-white rounded-md shadow-md
+                     opacity-0 invisible group-hover:opacity-100 group-hover:visible
+                     transition-all duration-200 z-50 py-2 border border-[#cbd0dd]"
+                  >
+                    {item.children.map((child, i) => (
+                      <Link
+                        key={i}
+                        to={child.path}
+                        className="block px-4 py-2 text-secondary hover:underline hover:text-secondary"
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           ))}
@@ -201,7 +213,7 @@ const Header = () => {
               {activePanel === "settings_suggest" && (
                 <>
                   {/* HEADER */}
-                 
+
 
                   {/* ================= THEME COLOR ================= */}
                   <div className="mb-6">
@@ -209,12 +221,12 @@ const Header = () => {
                       <span className="text-tiny font-bold text-black">
                         Theme Color
                       </span>
-                        <span
-                          className="text-tiny text-secondary underline cursor-pointer font-extrabold"
-                          onClick={() => setTheme("default")}
-                        >
-                          Default
-                        </span>
+                      <span
+                        className="text-tiny text-secondary underline cursor-pointer font-extrabold"
+                        onClick={() => setTheme("default")}
+                      >
+                        Default
+                      </span>
 
                     </div>
 
@@ -230,7 +242,7 @@ const Header = () => {
                     </div>
                   </div>
 
-               {/* ================= FONT FAMILY ================= */}
+                  {/* ================= FONT FAMILY ================= */}
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-tiny font-bold text-black">
@@ -287,13 +299,13 @@ const Header = () => {
                     </div>
                   </div>
 
-                {/* ================= NOTIFICATION ================= */}
+                  {/* ================= NOTIFICATION ================= */}
                   <div className="mb-6 border-t pt-4">
                     <div className="text-tiny font-bold text-black mb-3">
                       Notification
                     </div>
 
-                  {[
+                    {[
                       "Missed Activity Email",
                       "Show Preview Message",
                       "Desktop Notification",
