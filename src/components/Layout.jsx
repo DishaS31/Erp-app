@@ -7,23 +7,28 @@ import banner from "../assets/asideimage.jpeg";
 const Layout = () => {
   return (
     <>
+      {/* HEADER FIXED */}
       <Header />
-      <div className="flex bg-bg">
-        {/* ASIDE - COMMON */}
-        <aside className="w-[253px] border-r bg-white flex-shrink-0">
+
+      {/* PAGE AREA */}
+      <div className="flex bg-bg h-[calc(100vh-64px)]">
+        
+        {/* ASIDE FIXED HEIGHT */}
+        <aside className="w-[253px] border-r bg-white flex-shrink-0 h-full">
           <img
             src={banner}
             alt="ERP Banner"
-            className="w-full h-full object-contain bg-cover bg-center bg-no-repeat"
+            className="w-full h-full"
           />
         </aside>
 
-        {/* PAGE CONTENT */}
-        <main className="flex-1">
+        {/* MAIN — ONLY THIS SCROLLS */}
+        <main className="flex-1 h-full overflow-y-auto">
           <Outlet />
         </main>
       </div>
 
+      {/* FOOTER FIXED */}
       <Footer />
     </>
   );
