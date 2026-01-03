@@ -96,4 +96,7 @@ body{
   .bg-bg {
     background-color: rgb(var(--color-bg));
   }
+  .border-primary{
+    border-color: var(--color-primary);
+  }
 }

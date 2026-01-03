@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       {/* 🔥 GLOBAL THEME CLASSES */}
-      <div className="min-h-screen bg-bg text-secondary">
+      <div className="h-screen bg-bg text-secondary ">
         <App />
       </div>
     </BrowserRouter>

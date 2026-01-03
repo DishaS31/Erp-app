@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import AllCompanies from "./pages/AllCompanies";
 import MyCompany from "./pages/MyCompany"
 import SharedCompanies from "./pages/SharedCompanies";
-import AddCompany from "./pages/Addcompany";
+import AddCompany from "./pages/AddCompany";
 
 const App = () => {
   return (

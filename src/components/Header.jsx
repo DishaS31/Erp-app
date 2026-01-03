@@ -4,6 +4,13 @@ import { Link } from "react-router";
 import logo from "../assets/logo.png"
 import homeIcon from "../assets/home.png";
 import userAvatar from "../assets/user.jpg";
+import icon1 from "../assets/icon1.png";
+import icon2 from "../assets/icon2.png";
+import icon3 from "../assets/icon3.png";
+import icon4 from "../assets/icon4.png";
+import icon5 from "../assets/icon5.png";
+import icon6 from "../assets/icon6.png";
+import icon7 from "../assets/e-sahayak-slogo.png";
 import { setTheme } from "../utils/theme";
 import { useState } from "react";
 
@@ -39,12 +46,12 @@ const Header = () => {
     {
       label: "Manage Users",
       type: "external",
-      path: "https://winixindia.in/",
+      path: "https://my.aicountly.com/admin/people_sharing/logs",
     },
     {
       label: "Contacts",
       type: "external",
-      path: "https://tailwindcss.com/",
+      path: "https://contacts.aicountly.com/",
     },
   ];
 
@@ -52,12 +59,12 @@ const Header = () => {
   const actionBtns = [
     { icon: "device_reset", panel: "reset" },
     { icon: "settings_suggest", panel: "settings_suggest" },
-    { icon: "question_exchange", panel: "business" },
+    { icon: "question_exchange", panel: "question_exchange" },
   ];
 
 
   const [activePanel, setActivePanel] = useState(null);
-  // null | "business" | "reset"
+ 
 
   return (
     <header className="w-full bg-white  border border-[#cbd0dd] shadow-sm px-6">
@@ -165,6 +172,9 @@ const Header = () => {
             src={userAvatar}
             alt="User"
             className="h-10 w-10 rounded-full cursor-pointer "
+              onClick={() =>
+              setActivePanel(activePanel === "profile" ? null : "profile")
+            }
           />
         </div>
 
@@ -376,6 +386,185 @@ const Header = () => {
 
                 </>
               )}
+               
+               {activePanel === "question_exchange" && (
+                  <>
+                    
+
+                    <div className="grid grid-cols-3 ">
+
+                      {/* County Learning */}
+                      <a
+                        href="#"
+                        className="flex flex-col items-center gap-2  rounded-md w-full 
+                        hover:bg-[#eef2ff] transition border border-transparent
+                        hover:border-[#d1d7ff]"
+                      >
+                        <img src={icon2} className="h-20" />
+                        <span className="text-tiny font-semibold text-secondary">
+                          County Learning
+                        </span>
+                      </a>
+
+                      {/* E-sahayak */}
+                      <a
+                        href="#"
+                         className="flex flex-col items-center gap-2  rounded-md w-full 
+                        hover:bg-[#eef2ff] transition border border-transparent
+                        hover:border-[#d1d7ff]"
+                      >
+                        <img src={icon7} className="h-20" />
+                        <span className="text-tiny font-semibold text-secondary">
+                          E-sahayak
+                        </span>
+                      </a>
+
+                      {/* Help Desk — opens Modal */}
+                      <button
+                        onClick={() => setShowHelpModal(true)}
+                         className="flex flex-col items-center gap-2 rounded-md w-full 
+                        hover:bg-[#eef2ff] transition border border-transparent
+                        hover:border-[#d1d7ff]"
+                      >
+                        <img src={icon1} className="h-20" />
+                        <span className="text-tiny font-semibold text-secondary">
+                          Help Desk
+                        </span>
+                      </button>
+
+                      {/* Support */}
+                      <a
+                        href="#"
+                        className="flex flex-col items-center gap-2  rounded-md w-full 
+                        hover:bg-[#eef2ff] transition border border-transparent
+                        hover:border-[#d1d7ff]"
+                      >
+                        <img src={icon3} className="h-20" />
+                        <span className="text-tiny font-semibold text-secondary">
+                          Support
+                        </span>
+                      </a>
+
+                      {/* Aicountly Tour */}
+                      <a
+                        href="#"
+                        className="flex flex-col items-center gap-2  rounded-md w-full 
+                        hover:bg-[#eef2ff] transition border border-transparent
+                        hover:border-[#d1d7ff]"
+                      >
+                        <img src={icon4} className="h-20" />
+                        <span className="text-tiny font-semibold text-secondary">
+                          Aicountly Tour
+                        </span>
+                      </a>
+
+                      {/* Keyboard Shortcuts */}
+                      <a
+                        href="#"
+                         className="flex flex-col items-center gap-2  rounded-md w-full 
+                        hover:bg-[#eef2ff] transition border border-transparent
+                        hover:border-[#d1d7ff]"
+                      >
+                        <img src={icon5} className="h-20" />
+                        <span className="text-tiny font-semibold text-secondary text-center">
+                          Keyboard Shortcuts
+                        </span>
+                      </a>
+
+                      {/* Forums */}
+                      <a
+                        href="#"
+                        className="flex flex-col items-center gap-2  rounded-md w-full 
+                        hover:bg-[#eef2ff] transition border border-transparent
+                        hover:border-[#d1d7ff]"
+                      >
+                        <img src={icon6} className="h-20" />
+                        <span className="text-tiny font-semibold text-secondary">
+                          Forums
+                        </span>
+                      </a>
+                    </div>
+                  </>
+               )}
+
+              {activePanel === "profile" && (
+                <>
+                  {/* TOP — Avatar + Info */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <img
+                      src={userAvatar}
+                      alt="User"
+                      className="h-14 w-14 rounded-full border"
+                    />
+
+                    <div className="text-xs text-gray-700 space-y-1">
+                      <div><span className="font-bold">User ID:</span> 7886</div>
+                      <div><span className="font-bold">Org. ID:</span> 60020948365</div>
+                      <div>
+                        <span className="font-bold">Email:</span> dishas.5911@gmail.com
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold">Phone:</span>
+                        <button className="px-2 py-[2px] bg-blue-500 text-white rounded text-[10px]">
+                          Update
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MANAGE ACCOUNT */}
+                  <button className="w-full border border-primary text-primary rounded-md py-2 text-xs font-bold hover:bg-primary hover:text-white transition mb-3">
+                    Manage My Aicountly Account
+                  </button>
+
+                  {/* SEARCH */}
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="w-full border rounded-md px-3 py-2 text-xs font-semibold outline-none border-[#cbd0dd] mb-4"
+                  />
+
+                  {/* COMPANY LIST */}
+                  <div className="space-y-4 text-[14px] text-black">
+
+                    <div className=' border-b border-dashed border-gray-300'>
+                      <div className="font-bold">TEST</div>
+                      <div className="text-gray-500">Organization: erp0000348</div>
+                    </div>
+
+                    <div className=' border-b border-dashed border-gray-300'>
+                      <div className="font-bold">RAHUL B GUPTA & CO.</div>
+                      <div className="text-gray-500">Organization: erp0000103</div>
+                    </div>
+
+                    <div className=' border-b border-dashed border-gray-300'>
+                      <div className="font-bold">KAPIL ENTERPRISES</div>
+                      <div className="text-gray-500">Organization: erp0000139</div>
+                    </div>
+                  </div>
+
+                  {/* ADD COMPANY */}
+                  <div className="mt-6 text-tiny font-semibold cursor-pointer text-black-600 ">
+                    + Add another company
+                  </div>
+
+                  {/* SIGN OUT */}
+                  <div className="mt-6 text-center text-tiny font-bold cursor-pointer text-black">
+                    Sign out
+                  </div>
+
+                  {/* FOOTER */}
+                  <div className="mt-4 text-center text-tiny text-black space-x-3">
+                    <span>Privacy policy</span>
+                    <span>•</span>
+                    <span>Terms</span>
+                    <span>•</span>
+                    <span>Cookies</span>
+                  </div>
+                </>
+              )}
+
 
             </div>
           </div>

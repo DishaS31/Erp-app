@@ -8,13 +8,13 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <div className="flex bg-bg min-h-[calc(95vh-64px)]">
+      <div className="flex bg-bg">
         {/* ASIDE - COMMON */}
         <aside className="w-[253px] border-r bg-white flex-shrink-0">
           <img
             src={banner}
             alt="ERP Banner"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain bg-cover bg-center bg-no-repeat"
           />
         </aside>
 
