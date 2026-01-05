@@ -6,6 +6,7 @@ const Home = () => {
   const isAll = pathname.includes("/all");
   const isMy = pathname.includes("/my");
   const isShared = pathname.includes("/shared");
+  const isAdd = pathname.includes("/add"); 
 
   return (
     <>
@@ -14,12 +15,13 @@ const Home = () => {
         <Tab to="/company/all" label="All Companies" />
         <Tab to="/company/my" label="My Company" />
         <Tab to="/company/shared" label="Shared With Me" />
+        
       </div>
 
       {/* 🔹 ACTION BUTTONS (TAB BASED) */}
       <div className="px-10 py-4 flex gap-4 flex-wrap">
         {/* 🔹 ALL & MY COMPANY (SAME BUTTONS) */}
-        {(isAll || isMy) && (
+        {(isAll || isMy) && !isAdd && (
           <>
             <NavLink
               to={`${pathname}/add`}
@@ -69,7 +71,7 @@ const Tab = ({ to, label }) => (
   <NavLink
     to={to}
     className={({ isActive }) =>
-      `px-4 py-3 text-tiny font-extrabold rounded-t ${isActive ? "bg-[#1d528c] text-white" : "bg-white text-black"
+      `px-4 py-3 text-tiny font-extrabold rounded-t-md ${isActive ? "bg-[#1d528c] text-white" : "bg-white text-black"
       }`
     }
   >
