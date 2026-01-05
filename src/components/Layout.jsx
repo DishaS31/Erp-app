@@ -11,7 +11,7 @@ const Layout = () => {
       <Header />
 
       {/* PAGE AREA */}
-      <div className="flex bg-bg h-[calc(100vh-64px)]">
+      <div className="flex bg-bg h-[calc(100vh-105px)]">
         
         {/* ASIDE FIXED HEIGHT */}
         <aside className="w-[253px] border-r bg-white flex-shrink-0 h-full">

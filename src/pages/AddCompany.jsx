@@ -2,7 +2,7 @@ import React from "react";
 
 const AddCompany = () => {
   return (
-    <div className="p-6   pt-0 min-h-screen text-[#141824] font-sans">
+    <div className="p-6 pt-0 min-h-screen text-[#141824] font-sans">
 
       <h1 className="text-2xl font-extrabold mb-6">Add A Company</h1>
 
