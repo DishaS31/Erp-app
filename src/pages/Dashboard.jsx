@@ -1,13 +1,12 @@
 const Dashboard = () => {
   return (
-    <div className="bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-bold">Dashboard</h2>
+    <div className="bg-white rounded-lg p-6 shadow">
+      <h1 className="text-xl font-bold">Dashboard</h1>
       <p className="text-gray-600 mt-2">
-        This is static dashboard for now.
+        Dashboard layout is completely separate.
       </p>
     </div>
   );
 };
 
 export default Dashboard;
-

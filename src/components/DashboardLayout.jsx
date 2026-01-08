@@ -4,30 +4,26 @@ import DashboardFooter from "./DashboardFooter";
 
 const DashboardLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col bg-[#f4f6f9]">
 
-      {/* 🔝 DASHBOARD HEADER */}
+      {/* DASHBOARD HEADER */}
       <DashboardHeader />
 
-      {/* 🧱 BODY */}
-      <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 overflow-hidden">
 
-        {/* ⬅️ LEFT SIDEBAR (COMMON FOR ALL DASHBOARD PAGES) */}
-        <aside className="w-[280px] bg-white border-r">
-          <div className="h-full">
-            {/* yaha later sidebar ka pura code jayega */}
-            Sidebar
-          </div>
+        {/* DASHBOARD ASIDE */}
+        <aside className="w-64 bg-white border-r">
+          Dashboard Sidebar
         </aside>
 
-        {/* 📄 PAGE CONTENT */}
-        <main className="flex-1 overflow-auto bg-[#f6f7fb] p-6">
+        {/* DASHBOARD MAIN */}
+        <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>
 
       </div>
 
-      {/* 🔽 DASHBOARD FOOTER */}
+      {/* DASHBOARD FOOTER */}
       <DashboardFooter />
     </div>
   );

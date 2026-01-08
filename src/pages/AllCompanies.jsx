@@ -7,7 +7,7 @@ const AllCompanies = () => {
 
       <Link
         to="/company/dashboard"
-        className="bg-sky-600 text-white px-4 py-2 rounded"
+        className="bg-primary text-white px-4 py-2 rounded"
       >
         Go to Dashboard
       </Link>
