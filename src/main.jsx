@@ -9,7 +9,7 @@ loadTheme();
 loadFontFamily();
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/react">
       {/* 🔥 GLOBAL THEME CLASSES */}
       <div className="h-screen bg-bg text-secondary ">
         <App />

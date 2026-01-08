@@ -6,6 +6,7 @@ import MyCompany from "./pages/MyCompany"
 import SharedCompanies from "./pages/SharedCompanies";
 import AddCompany from "./pages/AddCompany";
 import Dashboard from "./pages/Dashboard";
+import DashboardLayout from "./components/DashboardLayout";
 
 const App = () => {
   return (
@@ -26,10 +27,16 @@ const App = () => {
           <Route path="shared/:companyId" element={<Dashboard />} /> */}
 
            {/* 🔥 STATIC DASHBOARD */}
-          <Route path="/company/dashboard" element={<Dashboard />} />
 
           <Route path="shared" element={<SharedCompanies />} />
+          
+            <Route path="dashboard" element={<DashboardLayout />}>
+              <Route index element={<Dashboard />} />
+            </Route>
+
         </Route>
+        
+
       </Route>
     </Routes>
   );
