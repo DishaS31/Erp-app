@@ -5,6 +5,7 @@ import AllCompanies from "./pages/AllCompanies";
 import MyCompany from "./pages/MyCompany"
 import SharedCompanies from "./pages/SharedCompanies";
 import AddCompany from "./pages/AddCompany";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
@@ -18,6 +19,14 @@ const App = () => {
 
           <Route path="my" element={<MyCompany />} />
           <Route path="my/add" element={<AddCompany />} />
+
+          {/* 🔥 DASHBOARD (DYNAMIC)
+          <Route path="all/:companyId" element={<Dashboard />} />
+          <Route path="my/:companyId" element={<Dashboard />} />
+          <Route path="shared/:companyId" element={<Dashboard />} /> */}
+
+           {/* 🔥 STATIC DASHBOARD */}
+          <Route path="/company/dashboard" element={<Dashboard />} />
 
           <Route path="shared" element={<SharedCompanies />} />
         </Route>
