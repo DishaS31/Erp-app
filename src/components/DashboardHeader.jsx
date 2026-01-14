@@ -432,7 +432,7 @@ const [openBranch, setOpenBranch] = useState(false);
                         Font Size
                       </span>
 
-                      <div className="inline-flex border rounded overflow-hidden border-[#25B003]">
+                      <div className="inline-flex border rounded overflow-hidden border-primary">
                         <button
                           onClick={() =>
                             document.documentElement.style.setProperty("--font-base", "12.8px")

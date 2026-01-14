@@ -1,6 +1,6 @@
 const Dashboard = () => {
   return (
-    <div className="bg-white rounded-lg p-6 shadow">
+    <div className="bg-white rounded-lg p-6 shadow m-6">
       <h1 className="text-xl font-bold">Dashboard</h1>
       <p className="text-gray-600 mt-2">
         Dashboard layout is completely separate.

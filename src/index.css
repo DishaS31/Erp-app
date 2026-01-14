@@ -97,9 +97,10 @@ body{
   .bg-bg {
     background-color: rgb(var(--color-bg));
   }
-  .border-primary{
-    border-color: var(--color-primary);
-  }
+ .border-primary{
+  border-color: rgb(var(--color-primary)) !important;
+}
+
    .focus-input {
     @apply   text-[12px]
            transition
@@ -108,4 +109,6 @@ body{
            focus:ring-2
            focus:ring-blue-400;
   }
+
+
 }
