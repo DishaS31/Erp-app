@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
+
 
 import logo from "../assets/logo.png";
 import homeIcon from "../assets/home.png";
@@ -256,7 +257,7 @@ const [openBranch, setOpenBranch] = useState(false);
 
                 {openMegaMenu === item.key && (
                   <div
-                    className="fixed left-0 top-[50px] w-screen bg-white border-t-4 border-[#25B003] shadow-md z-40"
+                    className="fixed left-0 top-[50px] w-screen bg-white border-t-4 border-primary shadow-md z-40"
                     onClick={() => setOpenMegaMenu(null)}
                   >
                     <div className="max-w-[1400px] mx-auto px-5 py-8">
@@ -274,9 +275,29 @@ const [openBranch, setOpenBranch] = useState(false);
                             </div>
 
                             <ul className="space-y-2 text-tiny text-[#525b75]">
-                              {section.items.map((label, j) => (
-                                <li key={j}>{label}</li>
-                              ))}
+                              {section.items.map((label, j) => {
+
+                                  if (
+                                    item.key === "transactions" &&
+                                    section.title === "SALES" &&
+                                    label === "Sale Invoice"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/transactions/sale-invoice"
+                                          className="hover:text-primary font-semibold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          {label}
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  return <li key={j}>{label}</li>;
+                                })}
+
                             </ul>
                           </div>
                         ))}

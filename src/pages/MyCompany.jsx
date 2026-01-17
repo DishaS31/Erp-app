@@ -1,11 +1,6 @@
-import React from 'react'
+import React from "react";
+import CompaniesAgGrid from "../components/CompaniesAgGrid";
 
-const MyCompany = () => {
-  return (
-    <div className="bg-white p-4 rounded shadow">
-    My Company Table (with action column)
-  </div>
-  )
+export default function MyCompany() {
+  return <CompaniesAgGrid filter="mine" />;
 }
-
-export default MyCompany

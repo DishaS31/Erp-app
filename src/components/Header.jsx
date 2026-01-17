@@ -12,9 +12,33 @@ import icon5 from "../assets/icon5.png";
 import icon6 from "../assets/icon6.png";
 import icon7 from "../assets/e-sahayak-slogo.png";
 import { setTheme } from "../utils/theme";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { apiFetch } from "../services/apiFetch";
+
 
 const Header = () => {
+
+  const [businessId, setBusinessId] = useState(null);
+
+  useEffect(() => {
+  async function loadBusinessId() {
+    try {
+      const data = await apiFetch(
+        "https://erp.aicountly.com/api/businessid"
+      );
+
+    
+     setBusinessId(data.data);
+
+
+    } catch (error) {
+      console.error("Business ID API failed ❌", error);
+    }
+  }
+
+  loadBusinessId();
+}, []);
+
 
   const themes = [
     { key: "red", color: "#dd0026" },
@@ -144,7 +168,9 @@ const Header = () => {
 
           {/* Business ID */}
           <div className="relative flex items-center gap-1 text-tiny font-bold cursor-pointer" onClick={() => setActivePanel(activePanel === "business" ? null : "business")}>
-            <span className='italic'>Business ID: N/A</span>
+            <span className="italic">
+              Business ID: {businessId ?? "N/A"}
+            </span>
             <span className="material-symbols-outlined ">
               expand_more
             </span>
@@ -185,9 +211,10 @@ const Header = () => {
               {/* BUSINESS PANEL */}
               {activePanel === "business" && (
                 <>
-                  <div className="font-extrabold text-tiny mb-4 text-black">
-                    My Business ID: N/A
-                  </div>
+                 <div className="font-extrabold text-tiny mb-4 text-black">
+                  My Business ID: {businessId ?? "N/A"}
+                </div>
+
 
                   <button className="w-full border border-primary text-primary rounded-md py-2 text-tiny font-bold hover:bg-primary hover:text-white transition">
                     Manage Business Account

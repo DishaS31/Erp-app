@@ -1,11 +1,6 @@
-import React from 'react'
+import React from "react";
+import CompaniesAgGrid from "../components/CompaniesAgGrid";
 
-const SharedCompanies = () => {
-  return (
-    <div className="bg-white p-4 rounded shadow">
-    Shared With Me Table (shared by column)
-  </div>
-  )
+export default function SharedCompanies() {
+  return <CompaniesAgGrid filter="shared" />;
 }
-
-export default SharedCompanies

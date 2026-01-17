@@ -3,8 +3,14 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { Outlet } from "react-router-dom";
 import banner from "../assets/asideimage.jpeg";
+import { useEffect } from "react";
+
+
 
 const Layout = () => {
+
+
+
   return (
     <>
       {/* HEADER FIXED */}

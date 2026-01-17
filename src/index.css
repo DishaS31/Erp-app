@@ -112,3 +112,39 @@ body{
 
 
 }
+
+/* Excel-like full cell borders */
+.ag-theme-alpine .ag-cell {
+  border-right: 1px solid #e5e7eb !important;
+}
+
+.ag-theme-alpine .ag-row {
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.ag-theme-alpine .ag-header-cell {
+  border-right: 1px solid #e5e7eb !important;
+}
+
+.ag-theme-alpine .ag-header-row {
+  border-bottom: 1px solid #e5e7eb !important;
+}
+/* Keep resize working but hide the visible line */
+.ag-theme-alpine .ag-header-cell-resize::after {
+  background-color: transparent !important;
+}
+/* Header font like your screenshot */
+.ag-theme-alpine .ag-header-cell-label {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #333333 !important;
+}
+
+/* Header background same light */
+.ag-theme-alpine .ag-header {
+  background: #f3f4fb !important;
+}
+.ag-theme-alpine .ag-cell {
+  font-size: 16px !important;
+  color: #333333 !important;
+}

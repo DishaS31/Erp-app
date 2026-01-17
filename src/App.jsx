@@ -11,6 +11,8 @@ import AddCompany from "./pages/AddCompany";
 // DASHBOARD
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
+import SaleInvoice from "./pages/Dashboard/Transactions/SaleInvoice";
+
 
 const App = () => {
   return (
@@ -34,6 +36,7 @@ const App = () => {
       {/* 🔥 DASHBOARD LAYOUT (COMPLETELY SEPARATE) */}
       <Route path="company/dashboard" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
+        <Route path="transactions/sale-invoice" element={<SaleInvoice />} />
       </Route>
 
     </Routes>
