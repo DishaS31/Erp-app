@@ -14,11 +14,34 @@ import icon7 from "../assets/e-sahayak-slogo.png";
 import { setTheme } from "../utils/theme";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../services/apiFetch";
+import { clearSession } from "../services/sessionStore";
+import { createPortal } from "react-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
+
 
 
 const Header = () => {
 
   const [businessId, setBusinessId] = useState(null);
+  const [activePanel, setActivePanel] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [actLoading, setActLoading] = useState(false);
+  const [actError, setActError] = useState("");
+  const [actSearch, setActSearch] = useState("");
+  const [userProfile, setUserProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [companies, setCompanies] = useState([]);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
+  const [companiesError, setCompaniesError] = useState("");
+  const [companySearch, setCompanySearch] = useState("");
+
+
+ const navigate = useNavigate();
+ const { pathname } = useLocation();
+
+  
 
   useEffect(() => {
   async function loadBusinessId() {
@@ -38,6 +61,124 @@ const Header = () => {
 
   loadBusinessId();
 }, []);
+
+
+const loadActivities = async () => {
+  try {
+    setActLoading(true);
+    setActError("");
+
+    const cmpId = 3; // abhi fixed (baad me dynamic karna)
+    const url = `https://erp.aicountly.com/api/companies/activities?cmp_id=${cmpId}&page=1&per_page=5`;
+
+    const data = await apiFetch(url, { method: "GET" });
+
+    const list = data?.data || [];
+
+  const mapped = list.map((x) => ({
+  text: x?.erp_activity_log || "Activity",
+  date: x?.erp_activity_date_time || "",
+}));
+
+    setActivities(mapped);
+
+    console.log("Activities API ✅", data);
+  } catch (e) {
+    setActError(e?.message || "Activities API Error");
+    setActivities([]);
+  } finally {
+    setActLoading(false);
+  }
+};
+
+const loadUserProfile = async () => {
+  try {
+    setProfileLoading(true);
+    setProfileError("");
+
+    const data = await apiFetch("https://erp.aicountly.com/api/userprofile");
+
+  
+   const profile = data?.data ?? null;
+    setUserProfile(profile);
+    
+
+
+    console.log("User Profile API ✅", data);
+  } catch (e) {
+    setProfileError(e?.message || "User Profile API Error");
+    setUserProfile(null);
+  } finally {
+    setProfileLoading(false);
+  }
+  
+};
+
+const loadCompanies = async () => {
+  try {
+    setCompaniesLoading(true);
+    setCompaniesError("");
+
+    const url = `https://erp.aicountly.com/api/companies?filter=all&page=1&per_page=50`;
+    const data = await apiFetch(url, { method: "GET" });
+
+    const list = Array.isArray(data)
+      ? data
+      : data?.data || data?.companies || [];
+
+    const mapped = list.map((c, idx) => ({
+      id: c?.comp_id ?? c?.comp_code ?? idx,
+      company_name: c?.company_name || c?.name || "-",
+      company_code: c?.comp_code || c?.company_code || c?.code || "-",
+    }));
+
+    setCompanies(mapped);
+    console.log("Companies for Profile Panel ✅", data);
+  } catch (e) {
+    setCompaniesError(e?.message || "Companies API Error");
+    setCompanies([]);
+  } finally {
+    setCompaniesLoading(false);
+  }
+};
+
+
+
+useEffect(() => {
+  if (activePanel === "reset") {
+    loadActivities();
+  }
+
+  if (activePanel === "profile") {
+    loadUserProfile();
+    loadCompanies(); 
+  }
+}, [activePanel]);
+
+
+
+const handleLogout = async () => {
+  try {
+    // 1) Logout API call
+    const res = await apiFetch("https://erp.aicountly.com/api/logout", {
+      method: "POST",
+    });
+
+    console.log("Logout API Response ✅", res);
+  } catch (err) {
+    console.log("Logout API failed ❌", err);
+  } finally {
+    // 2) frontend token clear
+    clearSession();
+
+    // 3) panel close (optional)
+    setActivePanel(null);
+
+    // 4) redirect
+    window.location.href = "https://my.aicountly.com/";
+  }
+};
+
 
 
   const themes = [
@@ -87,7 +228,7 @@ const Header = () => {
   ];
 
 
-  const [activePanel, setActivePanel] = useState(null);
+ 
  
 
   return (
@@ -194,17 +335,18 @@ const Header = () => {
 
 
           {/* User Profile Image */}
-          <img
-            src={userAvatar}
-            alt="User"
-            className="h-10 w-10 rounded-full cursor-pointer "
-              onClick={() =>
-              setActivePanel(activePanel === "profile" ? null : "profile")
-            }
-          />
+         <img
+          src={userProfile?.dpurl ? userProfile.dpurl : userAvatar}
+          alt="User"
+          className="h-10 w-10 rounded-full cursor-pointer object-cover"
+          onClick={() =>
+          setActivePanel(activePanel === "profile" ? null : "profile")
+          }
+        />
+
         </div>
 
-        {activePanel && (
+        {activePanel && createPortal (
           <div className="fixed right-0 top-16 w-96 h-[calc(100vh-64px)] bg-white border-l shadow-lg z-40 border-[#cbd0dd]">
             <div className="p-5 overflow-y-auto h-full">
 
@@ -234,17 +376,58 @@ const Header = () => {
               {/* RESET PANEL */}
               {activePanel === "reset" && (
                 <>
-                  <div className="font-extrabold text-tiny mb-2 text-black">
+                  <div className="font-extrabold text-tiny mb-3 text-black">
                     Recent Activities
                   </div>
 
+                  {/* Search */}
                   <input
                     type="text"
+                    value={actSearch}
+                    onChange={(e) => setActSearch(e.target.value)}
                     placeholder="Search Settings"
                     className="w-full border rounded-md px-3 py-2 text-tiny font-semibold outline-none border-[#cbd0dd]"
                   />
+
+                  {/* Loading / Error */}
+                  {actLoading && (
+                    <p className="text-tiny text-gray-500 mt-3">Loading...</p>
+                  )}
+
+                  {actError && (
+                    <p className="text-tiny text-red-600 mt-3">{actError}</p>
+                  )}
+
+                  {/* Activities List */}
+                  <div className="mt-3  rounded-md overflow-hidden bg-white">
+                    {!actLoading &&
+                      activities
+                        ?.filter((a) =>
+                          a?.text?.toLowerCase().includes(actSearch.toLowerCase())
+                        )
+                        .map((a, i) => (
+                          <div
+                            key={i}
+                            className="px-3 py-3 border-b  border-dashed border-[#ccc]"
+                          >
+                            <p className="text-tiny font-bold text-[#3e465b] leading-5">
+                              {a.text}
+                            </p>
+                            <p className="text-[11px] text-gray-400 mt-1">
+                              {a.date}
+                            </p>
+                          </div>
+                        ))}
+
+                    {!actLoading && activities?.length === 0 && (
+                      <p className="text-tiny text-gray-500 p-3">
+                        No recent activities
+                      </p>
+                    )}
+                  </div>
                 </>
               )}
+
 
               {/* SETTINGS PANEL */}
               {activePanel === "settings_suggest" && (
@@ -517,26 +700,58 @@ const Header = () => {
               {activePanel === "profile" && (
                 <>
                   {/* TOP — Avatar + Info */}
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-4 mb-4 justify-around">
                     <img
-                      src={userAvatar}
+                      src={userProfile?.dpurl ? userProfile.dpurl : userAvatar}
                       alt="User"
-                      className="h-14 w-14 rounded-full border"
+                      className="h-12 w-12 rounded-full cursor-pointer object-cover"
+                      onClick={() =>
+                        setActivePanel(activePanel === "profile" ? null : "profile")
+                      }
                     />
 
-                    <div className="text-xs text-gray-700 space-y-1">
-                      <div><span className="font-bold">User ID:</span> 7886</div>
-                      <div><span className="font-bold">Org. ID:</span> 60020948365</div>
-                      <div>
-                        <span className="font-bold">Email:</span> dishas.5911@gmail.com
-                      </div>
 
-                      <div className="flex items-center gap-2">
+                    <div className="text-xs text-gray-700 space-y-1">
+                    {profileLoading && (
+                        <p className="text-xs text-gray-500">Loading profile...</p>
+                      )}
+
+                      {profileError && (
+                        <p className="text-xs text-red-600">{profileError}</p>
+                      )}
+
+                     {userProfile && (
+                        <div className="text-tiny text-[#31374a] space-y-1 font-bold">
+                          <div>
+                            <span className="font-bold">User ID:</span>{" "}
+                            {userProfile?.uuid ?? "N/A"}
+                          </div>
+
+                          <div>
+                            <span className="font-bold">Name:</span>{" "}
+                            {(userProfile?.user_firstname || "") + " " + (userProfile?.user_lastname || "")}
+                          </div>
+
+                          <div>
+                            <span className="font-bold">Email:</span>{" "}
+                            {userProfile?.user_regdemail ?? "N/A"}
+                          </div>
+
+                          <div>
+                            <span className="font-bold">Phone:</span>{" "}
+                            {userProfile?.user_regdmobile ?? "N/A"}
+                          </div>
+                        </div>
+                      )}
+
+
+
+                      {/* <div className="flex items-center gap-2">
                         <span className="font-bold">Phone:</span>
                         <button className="px-2 py-[2px] bg-blue-500 text-white rounded text-[10px]">
                           Update
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
 
@@ -546,40 +761,78 @@ const Header = () => {
                   </button>
 
                   {/* SEARCH */}
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="w-full border rounded-md px-3 py-2 text-xs font-semibold outline-none border-[#cbd0dd] mb-4"
-                  />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={companySearch}
+                  onChange={(e) => setCompanySearch(e.target.value)}
+                  className="w-full border rounded-md px-3 py-2 text-xs font-semibold outline-none border-[#cbd0dd] mb-4"
+                />
 
-                  {/* COMPANY LIST */}
-                  <div className="space-y-4 text-[14px] text-black">
 
-                    <div className=' border-b border-dashed border-gray-300'>
-                      <div className="font-bold">TEST</div>
-                      <div className="text-gray-500">Organization: erp0000348</div>
-                    </div>
+                 
+                {/* COMPANY LIST */}
+                <div className="space-y-2 text-[14px] text-[#3e465b]">
 
-                    <div className=' border-b border-dashed border-gray-300'>
-                      <div className="font-bold">RAHUL B GUPTA & CO.</div>
-                      <div className="text-gray-500">Organization: erp0000103</div>
-                    </div>
+                  {companiesLoading && (
+                    <p className="text-xs text-gray-500">Loading companies...</p>
+                  )}
 
-                    <div className=' border-b border-dashed border-gray-300'>
-                      <div className="font-bold">KAPIL ENTERPRISES</div>
-                      <div className="text-gray-500">Organization: erp0000139</div>
-                    </div>
-                  </div>
+                  {companiesError && (
+                    <p className="text-xs text-red-600">{companiesError}</p>
+                  )}
+
+                  {!companiesLoading &&
+                    !companiesError &&
+                    companies
+                      ?.filter((c) => {
+                        const q = companySearch.toLowerCase().trim();
+                        if (!q) return true;
+                        return (
+                          (c?.company_name || "").toLowerCase().includes(q) ||
+                          (c?.company_code || "").toLowerCase().includes(q)
+                        );
+                      })
+                      .map((c) => (
+                        <div
+                          key={c.id}
+                          className="border-b border-dashed border-gray-300 pb-2"
+                        >
+                          <div className="font-bold">{c.company_name}</div>
+                          <div className="font-semibold text-tiny">
+                            Organization: {c.company_code}
+                          </div>
+                        </div>
+                      ))}
+
+                  {!companiesLoading &&
+                    !companiesError &&
+                    companies?.length === 0 && (
+                      <p className="text-xs text-gray-500">No companies found</p>
+                    )}
+                </div>
+
 
                   {/* ADD COMPANY */}
-                  <div className="mt-6 text-tiny font-semibold cursor-pointer text-black-600 ">
+                  <div
+                    className="mt-6 text-tiny font-semibold cursor-pointer text-black"
+                    onClick={() => {
+                      setActivePanel(null);
+                      navigate("/company/all/add");
+                    }}
+                  >
                     + Add another company
                   </div>
 
+
                   {/* SIGN OUT */}
-                  <div className="mt-6 text-center text-tiny font-bold cursor-pointer text-black">
-                    Sign out
-                  </div>
+                 <div
+                  className="mt-6 text-center text-tiny font-bold cursor-pointer text-black"
+                  onClick={handleLogout}
+                >
+                  Sign out
+                </div>
+
 
                   {/* FOOTER */}
                   <div className="mt-4 text-center text-tiny text-black space-x-3">
@@ -594,8 +847,9 @@ const Header = () => {
 
 
             </div>
-          </div>
-        )}
+          </div>,
+          document.body
+         )}
 
       </div>
     </header>

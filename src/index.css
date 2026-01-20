@@ -82,6 +82,10 @@ body{
     background-color: rgb(var(--color-primary));
   }
 
+    .bg-primary-light {
+    background-color: rgb(var(--color-primary) / 0.12);
+  }
+
   .text-primary {
     color: rgb(var(--color-primary));
   }
@@ -148,3 +152,9 @@ body{
   font-size: 16px !important;
   color: #333333 !important;
 }
+.ag-theme-alpine .ag-cell {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+

@@ -1,6 +1,17 @@
-import React from "react";
+import { useState } from "react";
 import CompaniesAgGrid from "../components/CompaniesAgGrid";
 
 export default function MyCompany() {
-  return <CompaniesAgGrid filter="mine" />;
+  const [selectedCompany, setSelectedCompany] = useState(null);
+
+  return (
+    <CompaniesAgGrid
+      filter="mine"
+      onSelectCompany={(row) => {
+        setSelectedCompany(row);
+        console.log("Selected Company (MY) ✅", row);
+        console.log("Selected Company ID ✅", row?.comp_id);
+      }}
+    />
+  );
 }

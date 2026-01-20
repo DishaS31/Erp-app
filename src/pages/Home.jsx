@@ -1,4 +1,8 @@
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { apiFetch } from "../services/apiFetch";
+import { useEffect } from "react";
+
+
 
 const Home = () => {
   const { pathname } = useLocation();
@@ -7,6 +11,11 @@ const Home = () => {
   const isMy = pathname.includes("/my");
   const isShared = pathname.includes("/shared");
   const isAdd = pathname.includes("/add");
+  const navigate = useNavigate();
+
+    useEffect(() => {
+    localStorage.removeItem("selected_company_id");
+  }, [pathname]);
 
   // const isDashboard = pathname.match(/\/company\/(all|my|shared)\/\w+/);
 
@@ -38,13 +47,69 @@ const Home = () => {
               Open Company
             </button>
 
-            <button className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow">
-              Edit Company
-            </button>
+            <button
+                className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow"
+                onClick={() => {
+                  const id = localStorage.getItem("selected_company_id");
+                  if (!id) {
+                    alert("Please select a company first!");
+                    return;
+                  }
+                  navigate(`/company/edit/${id}`);
+                }}
+              >
+                Edit Company
+              </button>
 
-            <button className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow">
-              Delete Company
-            </button>
+
+      <button
+          className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow"
+          onClick={async () => {
+            const id = localStorage.getItem("selected_company_id");
+
+            // ✅ 1)  check: company select 
+            if (!id || id === "null" || id === "undefined" || id.trim() === "") {
+              alert("Please select a company first!");
+              return;
+            }
+
+            // ✅ 2) Confirm popup
+            const ok = window.confirm("Are you sure you want to delete this company?");
+            if (!ok) return;
+
+            try {
+              // ✅ 3) API hit
+              const res = await apiFetch(
+                `https://erp.aicountly.com/api/companies/delete/${id}`,
+                { method: "DELETE" }
+              );
+
+              console.log("DELETE RESPONSE ✅", res);
+
+              // ✅ 4) Success handle
+             if (res?.success == 1 || res?.success === "1") {
+                alert("Company deleted successfully ✅");
+
+                // selected id remove
+                localStorage.removeItem("selected_company_id");
+
+                // refresh grid
+                window.location.reload();
+              } else {
+                alert(res?.message || "Delete failed ❌");
+              }
+            } catch (err) {
+              console.error("DELETE ERROR ❌", err);
+              alert(err?.message || "Delete failed ❌");
+            }
+          }}
+        >
+          Delete Company
+        </button>
+
+
+
+
           </>
         )}
 

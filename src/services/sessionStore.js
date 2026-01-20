@@ -14,3 +14,7 @@ export function getSesKey() {
 export function isSessionValid() {
   return sesKey && Date.now() < sesExpiry;
 }
+export function clearSession() {
+  sesKey = null;
+  sesExpiry = 0;
+}

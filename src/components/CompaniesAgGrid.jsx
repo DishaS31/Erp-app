@@ -13,11 +13,12 @@ import { apiFetch } from "../services/apiFetch";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-export default function CompaniesAgGrid({ filter = "all" }) {
+export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
+ {
   const gridRef = useRef(null);
 
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(25);
   const [rowData, setRowData] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -89,18 +90,23 @@ export default function CompaniesAgGrid({ filter = "all" }) {
         ? data
         : data?.data || data?.companies || [];
 
-        const mapped = list.map((c, idx) => ({
-          __local_row_id: `${page}-${perPage}-${c?.comp_id ?? c?.comp_code ?? idx}`,
+    const mapped = list.map((c, idx) => ({
+      __local_row_id: `${page}-${perPage}-${c?.comp_id ?? c?.comp_code ?? idx}`,
 
-          company_code: c?.comp_code || c?.company_code || c?.code || "-",
-          company_name: c?.company_name || c?.name || "-",
-          company_short_name: c?.comp_short_name || c?.company_short_name || c?.short_name || "-",
-          fin_year: c?.finyear || c?.fin_year || "-",
+      comp_id: c?.comp_id,   // ✅ IMPORTANT for edit
+      comp_code: c?.comp_code,
 
-          email: c?.email,
-          phone: c?.phone,
-          status: c?.comp_status ?? c?.status,
-        }));
+      company_code: c?.comp_code || c?.company_code || c?.code || "-",
+      company_name: c?.company_name || c?.name || "-",
+      company_short_name:
+        c?.comp_short_name || c?.company_short_name || c?.short_name || "-",
+      fin_year: c?.finyear || c?.fin_year || "-",
+
+      email: c?.email,
+      phone: c?.phone,
+      status: c?.comp_status ?? c?.status,
+    }));
+
 
 
       setRowData(mapped);
@@ -180,7 +186,7 @@ export default function CompaniesAgGrid({ filter = "all" }) {
           "--ag-font-size": "13px",
           "--ag-font-family":
             '"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif',
-            "--ag-selected-row-background-color": "#eaf5c8",
+            "--ag-selected-row-background-color": "rgb(var(--color-primary) / 0.12)",
 
         }}
       >
@@ -193,13 +199,26 @@ export default function CompaniesAgGrid({ filter = "all" }) {
           getRowId={getRowId}
           pagination={false}
           rowSelection="single"
-          headerHeight={40}
-          rowHeight={40}
+          headerHeight={34}
+          rowHeight={32}
           animateRows
           suppressDragLeaveHidesColumns
           suppressNoRowsOverlay
            domLayout="autoHeight"
           onGridReady={onGridReady}
+          onSelectionChanged={() => {
+            const selected = gridRef.current?.api?.getSelectedRows?.()?.[0] || null;
+
+            if (selected?.comp_id) {
+              localStorage.setItem("selected_company_id", String(selected.comp_id));
+            } else {
+              localStorage.removeItem("selected_company_id");
+            }
+
+            onSelectCompany?.(selected);
+          }}
+
+
         />
       </div>
 

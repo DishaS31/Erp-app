@@ -7,6 +7,8 @@ import AllCompanies from "./pages/AllCompanies";
 import MyCompany from "./pages/MyCompany";
 import SharedCompanies from "./pages/SharedCompanies";
 import AddCompany from "./pages/AddCompany";
+import EditCompany from "./pages/EditCompany";
+
 
 // DASHBOARD
 import DashboardLayout from "./components/DashboardLayout";
@@ -28,6 +30,7 @@ const App = () => {
 
           <Route path="my" element={<MyCompany />} />
           <Route path="my/add" element={<AddCompany />} />
+           <Route path="edit/:id" element={<EditCompany />} />
 
           <Route path="shared" element={<SharedCompanies />} />
         </Route>
