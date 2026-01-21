@@ -25,8 +25,10 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
   const [quickFilter, setQuickFilter] = useState("");
   const [error, setError] = useState("");
 
-  const columnDefs = useMemo(
-    () => [
+ const columnDefs = useMemo(() => {
+  // ✅ RECYCLE BIN COLUMNS 
+  if (filter === "recycle") {
+    return [
       {
         headerName: "",
         width: 45,
@@ -49,20 +51,58 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
         minWidth: 260,
       },
       {
-        headerName: "COMPANY SHORT NAME",
-        field: "company_short_name",
-        flex: 1.2,
-        minWidth: 260,
-      },
-      {
         headerName: "FIN. YEAR(S)",
         field: "fin_year",
         flex: 1.2,
         minWidth: 240,
       },
-    ],
-    []
-  );
+      {
+        headerName: "DELETION DATE",
+        field: "deletion_date",
+        flex: 1.2,
+        minWidth: 220,
+      },
+    ];
+  }
+
+  // ✅ NORMAL COMPANIES COLUMNS
+  return [
+    {
+      headerName: "",
+      width: 45,
+      pinned: "left",
+      valueGetter: (params) => params.node.rowIndex + 1,
+      sortable: false,
+      filter: false,
+      resizable: false,
+    },
+    {
+      headerName: "COMPANY CODE",
+      field: "company_code",
+      flex: 1,
+      minWidth: 180,
+    },
+    {
+      headerName: "COMPANY NAME",
+      field: "company_name",
+      flex: 1.5,
+      minWidth: 260,
+    },
+    {
+      headerName: "COMPANY SHORT NAME",
+      field: "company_short_name",
+      flex: 1.2,
+      minWidth: 260,
+    },
+    {
+      headerName: "FIN. YEAR(S)",
+      field: "fin_year",
+      flex: 1.2,
+      minWidth: 240,
+    },
+  ];
+}, [filter]);
+
 
   const defaultColDef = useMemo(
     () => ({
@@ -89,6 +129,9 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
       const list = Array.isArray(data)
         ? data
         : data?.data || data?.companies || [];
+        console.log("RECYCLE FIRST ROW ✅", list?.[0]);
+        console.log("RECYCLE BIN OBJECT ✅", list?.[0]?.recycle_bin);
+
 
     const mapped = list.map((c, idx) => ({
       __local_row_id: `${page}-${perPage}-${c?.comp_id ?? c?.comp_code ?? idx}`,
@@ -101,6 +144,10 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
       company_short_name:
         c?.comp_short_name || c?.company_short_name || c?.short_name || "-",
       fin_year: c?.finyear || c?.fin_year || "-",
+
+      // ✅ only used in recycle bin
+     deletion_date: c?.recycle_bin?.recycle_date || "-",
+
 
       email: c?.email,
       phone: c?.phone,
@@ -207,7 +254,7 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
            domLayout="autoHeight"
           onGridReady={onGridReady}
           onSelectionChanged={() => {
-            const selected = gridRef.current?.api?.getSelectedRows?.()?.[0] || null;
+          const selected = gridRef.current?.api?.getSelectedRows?.()?.[0] || null;
 
             if (selected?.comp_id) {
               localStorage.setItem("selected_company_id", String(selected.comp_id));

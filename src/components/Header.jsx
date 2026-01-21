@@ -12,7 +12,7 @@ import icon5 from "../assets/icon5.png";
 import icon6 from "../assets/icon6.png";
 import icon7 from "../assets/e-sahayak-slogo.png";
 import { setTheme } from "../utils/theme";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { apiFetch } from "../services/apiFetch";
 import { clearSession } from "../services/sessionStore";
 import { createPortal } from "react-dom";
@@ -36,6 +36,10 @@ const Header = () => {
   const [companiesLoading, setCompaniesLoading] = useState(false);
   const [companiesError, setCompaniesError] = useState("");
   const [companySearch, setCompanySearch] = useState("");
+  const panelRef = useRef(null);
+  const triggerRef = useRef(null);
+
+
 
 
  const navigate = useNavigate();
@@ -154,6 +158,32 @@ useEffect(() => {
     loadCompanies(); 
   }
 }, [activePanel]);
+
+
+useEffect(() => {
+  const handleOutsideClick = (e) => {
+    if (!activePanel) return;
+
+    const clickedInsidePanel =
+      panelRef.current && panelRef.current.contains(e.target);
+
+    const clickedOnTrigger =
+      triggerRef.current && triggerRef.current.contains(e.target);
+
+    if (!clickedInsidePanel && !clickedOnTrigger) {
+      setActivePanel(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleOutsideClick);
+
+  return () => {
+    document.removeEventListener("mousedown", handleOutsideClick);
+  };
+}, [activePanel]);
+
+
+
 
 
 
@@ -305,7 +335,7 @@ const handleLogout = async () => {
 
 
         {/* RIGHT - ACTIONS */}
-        <div className="flex items-center gap-4 text-secondary">
+        <div ref={triggerRef}  className="flex items-center gap-4 text-secondary">
 
           {/* Business ID */}
           <div className="relative flex items-center gap-1 text-tiny font-bold cursor-pointer" onClick={() => setActivePanel(activePanel === "business" ? null : "business")}>
@@ -347,7 +377,7 @@ const handleLogout = async () => {
         </div>
 
         {activePanel && createPortal (
-          <div className="fixed right-0 top-16 w-96 h-[calc(100vh-64px)] bg-white border-l shadow-lg z-40 border-[#cbd0dd]">
+          <div  ref={panelRef} className="fixed right-0 top-16 w-96 h-[calc(100vh-64px)] bg-white border-l shadow-lg z-40 border-[#cbd0dd]">
             <div className="p-5 overflow-y-auto h-full">
 
               {/* BUSINESS PANEL */}

@@ -8,6 +8,10 @@ import MyCompany from "./pages/MyCompany";
 import SharedCompanies from "./pages/SharedCompanies";
 import AddCompany from "./pages/AddCompany";
 import EditCompany from "./pages/EditCompany";
+import RecycleBin from "./pages/RecycleBin";
+import CompanyAccess from "./pages/CompanyAccess";
+
+
 
 
 // DASHBOARD
@@ -33,6 +37,9 @@ const App = () => {
            <Route path="edit/:id" element={<EditCompany />} />
 
           <Route path="shared" element={<SharedCompanies />} />
+          <Route path="recycle-bin" element={<RecycleBin />} />
+          <Route path="access" element={<CompanyAccess />} />
+
         </Route>
       </Route>
 
