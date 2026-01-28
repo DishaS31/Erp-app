@@ -435,7 +435,7 @@ export default function EditCompany() {
 
        
       const data = await apiFetch(
-    `https://erp.aicountly.com/api/companyinfo?comp_id=${id}`,
+    `/companyinfo?comp_id=${id}`,
     {
         method: "GET",
     }
@@ -534,7 +534,7 @@ export default function EditCompany() {
 
     console.log("UPDATE COMPANY PAYLOAD ✅", payload);
 
-    const res = await apiFetch(`https://erp.aicountly.com/api/companies/${id}`, {
+    const res = await apiFetch(`/companies/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

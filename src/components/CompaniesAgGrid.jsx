@@ -123,7 +123,7 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
       setLoading(true);
       setError("");
 
-      const url = `https://erp.aicountly.com/api/companies?filter=${filter}&page=${page}&per_page=${perPage}`;
+      const url = `/companies?filter=${filter}&page=${page}&per_page=${perPage}`;
       const data = await apiFetch(url, { method: "GET" });
 
       const list = Array.isArray(data)
@@ -220,7 +220,7 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
 
       {/* Grid */}
       <div
-        className="ag-theme-alpine"
+        className="ag-theme-alpine companies-grid"
         style={{
           width: "100%",
           height: "auto",

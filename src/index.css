@@ -122,7 +122,7 @@ body{
   border-right: 1px solid #e5e7eb !important;
 }
 
-.ag-theme-alpine .ag-row {
+.companies-grid .ag-row {
   border-bottom: 1px solid #e5e7eb !important;
 }
 
@@ -130,7 +130,7 @@ body{
   border-right: 1px solid #e5e7eb !important;
 }
 
-.ag-theme-alpine .ag-header-row {
+.companies-grid .ag-header-row {
   border-bottom: 1px solid #e5e7eb !important;
 }
 /* Keep resize working but hide the visible line */
@@ -138,23 +138,114 @@ body{
   background-color: transparent !important;
 }
 /* Header font like your screenshot */
-.ag-theme-alpine .ag-header-cell-label {
+.companies-grid .ag-header-cell-label {
   font-size: 16px !important;
   font-weight: 600 !important;
   color: #333333 !important;
 }
 
-/* Header background same light */
-.ag-theme-alpine .ag-header {
-  background: #f3f4fb !important;
+
+/* SALE INVOICE GRID – HEADER COLOR */
+.sale-items-grid .ag-header-cell-label {
+  color: #333 !important;
+  font-weight: 500;
 }
-.ag-theme-alpine .ag-cell {
-  font-size: 16px !important;
-  color: #333333 !important;
-}
-.ag-theme-alpine .ag-cell {
+
+/* SALE INVOICE GRID – CELL PADDING FIX */
+.sale-items-grid .ag-cell {
   padding-left: 6px !important;
   padding-right: 6px !important;
 }
+
+/* ===============================
+   SALE INVOICE GRID – FINAL
+================================ */
+
+.sale-items-grid {
+  --ag-font-size: 13px;
+}
+
+/* HEADER */
+.sale-items-grid .ag-header-cell-label {
+  color: #333 !important;
+  font-weight: 600;
+}
+
+/* CELL PADDING (compact) */
+.sale-items-grid .ag-cell {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  display: flex;
+  align-items: center;
+}
+
+/* LEFT PINNED (row no.) */
+.sale-items-grid .ag-cell-last-left-pinned {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  text-align: center;
+}
+
+
+
+
+/* ===============================
+   TOTAL ROW (FOOTER STYLE)
+================================ */
+
+.sale-items-grid .ag-row-pinned {
+  background-color: #e6eff4 !important;
+  font-weight: 600;
+  border-top: 1px solid #cbd5e1;
+  height: 34px !important;
+}
+
+.sale-items-grid .ag-row-pinned .ag-cell {
+  background-color: #e6eff4 !important;
+  color: #111827;
+}
+
+/* "Total" label */
+.sale-items-grid .ag-row-pinned .ag-cell[col-id="item_name"] {
+  font-weight: 700;
+}
+
+/* numeric totals */
+.sale-items-grid .ag-row-pinned .ag-cell[col-id="quantity"],
+.sale-items-grid .ag-row-pinned .ag-cell[col-id="amount"] {
+  text-align: right;
+  padding-right: 10px;
+}
+
+/* no hover effect on total row */
+.sale-items-grid .ag-row-pinned:hover {
+  background-color: #e6eff4 !important;
+}
+
+/* remove gap before pagination */
+.sale-items-grid .ag-floating-bottom {
+  margin-bottom: 0 !important;
+}
+
+
+/* BILL SUNDRY GRID – SAME GRID PAGE */
+.bill-sundry-grid .ag-header-cell-label {
+  color: #333;
+  font-weight: 600;
+}
+
+.bill-sundry-grid .ag-cell {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  display: flex;
+  align-items: center;
+}
+
+.bill-sundry-grid .ag-row-pinned {
+  background-color: #e6eff4 !important;
+  font-weight: 600;
+  border-top: 1px solid #cbd5e1;
+}
+
 
 

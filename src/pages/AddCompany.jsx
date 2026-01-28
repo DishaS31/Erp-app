@@ -440,7 +440,7 @@ const handleSave = async () => {
 
     console.log("CREATE COMPANY PAYLOAD ✅", payload);
 
-    const res = await apiFetch("https://erp.aicountly.com/api/companies/create", {
+    const res = await apiFetch("/companies/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

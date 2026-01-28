@@ -1,5 +1,7 @@
 import { getSesKey, isSessionValid, saveSession } from "./sessionStore";
 
+const API_BASE_URL = "https://aicountly.org/api"; // ✅ static domain
+
 let isRefreshing = false;
 let refreshPromise = null;
 
@@ -11,13 +13,18 @@ export async function apiFetch(url, options = {}) {
 
   const sesKey = getSesKey();
 
-  // ✅ agar ab bhi null hai → refresh fail
+  // ✅  null  → refresh fail
   if (!sesKey) {
     console.error("ses_key missing ❌");
     throw new Error("Unauthorized");
   }
 
-  const res = await fetch(url, {
+  // ✅ base url auto attach
+  const finalUrl = url.startsWith("http")
+    ? url
+    : `${API_BASE_URL}${url.startsWith("/") ? url : `/${url}`}`;
+
+  const res = await fetch(finalUrl, {
     ...options,
     headers: {
       ...options.headers,
@@ -35,7 +42,7 @@ export async function apiFetch(url, options = {}) {
 }
 
 async function refreshSesKey() {
-  // ✅ single-flight: agar already refresh chal raha hai to same promise wait karo
+  // ✅ single-flight: 
   if (refreshPromise) return refreshPromise;
 
   refreshPromise = (async () => {
@@ -43,7 +50,7 @@ async function refreshSesKey() {
     isRefreshing = true;
 
     try {
-      const res = await fetch("https://erp.aicountly.com/api/seskey", {
+      const res = await fetch(`${API_BASE_URL}/seskey`, {
         method: "POST",
         credentials: "include",
       });
@@ -59,8 +66,7 @@ async function refreshSesKey() {
       const newKey =
         data?.ses_key || data?.sesKey || data?.token || data?.access_token;
 
-      const expires =
-        data?.expires_in || data?.expiresIn || 3600;
+      const expires = data?.expires_in || data?.expiresIn || 3600;
 
       if (!newKey) {
         console.error("ses_key missing in response ❌", data);

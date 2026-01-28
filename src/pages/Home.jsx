@@ -50,7 +50,7 @@ const Home = () => {
 
     // ✅ 3) API hit
     const res = await apiFetch(
-      `https://erp.aicountly.com/api/companies/delete/${id}`,
+      `/companies/delete/${id}`,
       { method: "DELETE" }
     );
 
@@ -95,7 +95,7 @@ const handleConfirmRestore = async () => {
 
     // ✅ RESTORE API 
       const res = await apiFetch(
-     `https://erp.aicountly.com/api/companies/${id}/restore`,
+     `/companies/${id}/restore`,
       { method: "POST" }
     );
 
@@ -136,7 +136,7 @@ const handleConfirmPermanentDelete = async () => {
 
     // ✅ PERMANENT DELETE API 
     const res = await apiFetch(
- `https://erp.aicountly.com/api/companies/${id}/destroy`,
+ `/companies/${id}/destroy`,
   { method: "DELETE" }
 );
 

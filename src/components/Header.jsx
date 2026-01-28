@@ -51,7 +51,7 @@ const Header = () => {
   async function loadBusinessId() {
     try {
       const data = await apiFetch(
-        "https://erp.aicountly.com/api/businessid"
+        "/businessid"
       );
 
     
@@ -73,7 +73,7 @@ const loadActivities = async () => {
     setActError("");
 
     const cmpId = 3; // abhi fixed (baad me dynamic karna)
-    const url = `https://erp.aicountly.com/api/companies/activities?cmp_id=${cmpId}&page=1&per_page=5`;
+    const url = `/companies/activities?cmp_id=${cmpId}&page=1&per_page=5`;
 
     const data = await apiFetch(url, { method: "GET" });
 
@@ -100,7 +100,7 @@ const loadUserProfile = async () => {
     setProfileLoading(true);
     setProfileError("");
 
-    const data = await apiFetch("https://erp.aicountly.com/api/userprofile");
+    const data = await apiFetch("/userprofile");
 
   
    const profile = data?.data ?? null;
@@ -123,7 +123,7 @@ const loadCompanies = async () => {
     setCompaniesLoading(true);
     setCompaniesError("");
 
-    const url = `https://erp.aicountly.com/api/companies?filter=all&page=1&per_page=50`;
+    const url = `/companies?filter=all&page=1&per_page=50`;
     const data = await apiFetch(url, { method: "GET" });
 
     const list = Array.isArray(data)
@@ -190,7 +190,7 @@ useEffect(() => {
 const handleLogout = async () => {
   try {
     // 1) Logout API call
-    const res = await apiFetch("https://erp.aicountly.com/api/logout", {
+    const res = await apiFetch("/logout", {
       method: "POST",
     });
 
