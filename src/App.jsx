@@ -18,6 +18,8 @@ import CompanyAccess from "./pages/CompanyAccess";
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import SaleInvoice from "./pages/Dashboard/Transactions/SaleInvoice";
+import InventoryStatus from "./pages/Dashboard/Reports/InventoryStatus";
+
 
 
 const App = () => {
@@ -47,6 +49,7 @@ const App = () => {
       <Route path="company/dashboard" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="transactions/sale-invoice" element={<SaleInvoice />} />
+         <Route path="reports/inventory-status" element={<InventoryStatus />} />
       </Route>
 
     </Routes>

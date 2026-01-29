@@ -1,6 +1,6 @@
 import { getSesKey, isSessionValid, saveSession } from "./sessionStore";
 
-const API_BASE_URL = "https://aicountly.org/api"; // ✅ static domain
+const API_BASE_URL = "https://erp.aicountly.com/api"; // ✅ static domain
 
 let isRefreshing = false;
 let refreshPromise = null;

@@ -5,107 +5,203 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
 const ITEM_MASTER = Array.from({ length: 150000 }).map((_, i) => ({
-  name: `Item ${i + 1}`,
+  id: i + 1,              // 🔥 IMPORTANT (ID)
+  name: `Item ${i + 1}`,  // display
 }));
+
 
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const ItemNameEditor = React.forwardRef((props, ref) => {
-  const [value, setValue] = useState(props.value || "");
+  const selectedItemRef = useRef(null);
+  const listRef = useRef([]);
+  const activeIndexRef = useRef(0);
+  
+  const [value, setValue] = useState(props.value?.name || "");
   const [list, setList] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const selectedValueRef = useRef(props.value || "");
+  const inputRef = useRef(null);
+
+useEffect(() => {
+  // 🔥 RESET every time editor opens
+  selectedItemRef.current = null;
+
+  if (props.value?.id) {
+    setValue(props.value.name);
+    console.log("✅ INIT - Editor with value:", props.value);
+  } else {
+    setValue("");
+    console.log("🆕 INIT - Fresh editor");
+  }
+
+  return () => {
+    if (selectedItemRef.current) {
+      console.log("💾 UNMOUNT - Saving:", selectedItemRef.current);
+      props.node.setDataValue("item", selectedItemRef.current);
+    }
+  };
+}, []);
+
+
+  // 🔥 Sync refs whenever state changes
+  useEffect(() => {
+    listRef.current = list;
+    console.log("📝 Synced listRef with", list.length, "items");
+  }, [list]);
 
   useEffect(() => {
-    console.log(">>> ItemNameEditor MOUNT", {
-      valueProp: props.value,
-      rowIndex: props.node?.rowIndex,
-      colId: props.column?.getColId?.(),
-      hasApi: !!props.api,
-      nodeData: props.node?.data,
-    });
-
-    return () => {
-      console.log(">>> ItemNameEditor UNMOUNT", {
-        rowIndex: props.node?.rowIndex,
-      });
-    };
-  }, []);
-
+    activeIndexRef.current = activeIndex;
+  }, [activeIndex]);
 
   const onChange = (e) => {
     const v = e.target.value;
     setValue(v);
-    selectedValueRef.current = v;
 
     if (v.length >= 1) {
-      setList(
-        ITEM_MASTER
-          .filter(item =>
-            item.name.toLowerCase().startsWith(v.toLowerCase())
-          )
-          .slice(0, 50)
-      );
+      const filteredItems = ITEM_MASTER.filter(item =>
+        item.name.toLowerCase().startsWith(v.toLowerCase())
+      ).slice(0, 50);
+
+      setList(filteredItems);
+      console.log("🔍 Typing:", v, "| Found:", filteredItems.length, "matches");
       setActiveIndex(0);
     } else {
       setList([]);
+      setActiveIndex(0);
     }
   };
 
   React.useImperativeHandle(ref, () => ({
     getValue() {
-      return selectedValueRef.current;
+      console.log("getValue() - returning:", selectedItemRef.current);
+      return selectedItemRef.current;
     },
+    isCancelBeforeStart() {
+      return false;
+    },
+    isCancelAfterEnd() {
+      return false;
+    }
   }));
 
+  const selectItem = (item) => {
+    console.log("✅ SELECTED ITEM:", {
+      id: item.id,
+      name: item.name,
+    });
+
+    selectedItemRef.current = item;
+    setValue(item.name);
+    setList([]);
+    listRef.current = [];
+    
+    // 🔥 CRITICAL: Update grid cell BEFORE stopping editing
+    props.node.setDataValue("item", item);
+    console.log("📊 Grid cell updated immediately");
+    
+    // Trigger onCellValueChanged by stopping edit
+    props.stopEditing(true);
+  };
+
+const handleBlur = () => {
+  console.log(
+    "📌 Input blurred | activeIndexRef:",
+    activeIndexRef.current,
+    "| listRef.length:",
+    listRef.current.length
+  );
+
+  if (listRef.current.length > 0) {
+    const selectedItem = listRef.current[activeIndexRef.current];
+    if (selectedItem) {
+      console.log("🔄 Selecting on blur:", selectedItem.name);
+      selectItem(selectedItem);
+      return;
+    }
+  }
+
+  props.stopEditing(false);
+};
+
+
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <input
+        ref={inputRef}
         autoFocus
         value={value}
         onChange={onChange}
+        onBlur={handleBlur}
         onKeyDown={(e) => {
-          if (!list.length) return;
+          console.log("⌨️ Key:", e.key, "| listRef.length:", listRef.current.length, "| activeIdx:", activeIndexRef.current);
+
+          if (e.key === "Escape") {
+            e.preventDefault();
+            console.log("🔴 Escape - closing");
+            props.stopEditing(false);
+            return;
+          }
+
+          if (listRef.current.length === 0) {
+            console.log("⚠️ No items in dropdown");
+            return;
+          }
 
           if (e.key === "ArrowDown") {
             e.preventDefault();
-            setActiveIndex(i => Math.min(i + 1, list.length - 1));
+            activeIndexRef.current = Math.min(activeIndexRef.current + 1, listRef.current.length - 1);
+            setActiveIndex(activeIndexRef.current);
+            console.log("⬇️ Arrow Down → idx:", activeIndexRef.current);
+            return;
           }
 
           if (e.key === "ArrowUp") {
             e.preventDefault();
-            setActiveIndex(i => Math.max(i - 1, 0));
+            activeIndexRef.current = Math.max(activeIndexRef.current - 1, 0);
+            setActiveIndex(activeIndexRef.current);
+            console.log("⬆️ Arrow Up → idx:", activeIndexRef.current);
+            return;
           }
 
           if (e.key === "Enter") {
             e.preventDefault();
-            const selected = list[activeIndex].name;
-            selectedValueRef.current = selected;
-            setValue(selected);
-            setList([]);
-            props.stopEditing(false); // ✅ THIS IS THE KEY
+            const selected = listRef.current[activeIndexRef.current];
+            console.log("🟢 Enter | idx:", activeIndexRef.current, "| item:", selected?.name);
+            if (selected) {
+              selectItem(selected);
+            } else {
+              console.warn("❌ No item at index");
+            }
+            return;
           }
         }}
-        className="w-full h-[30px] px-2 border outline-none"
+        placeholder="Type to search..."
+        className="w-full h-[30px] px-2 border border-gray-400 outline-none focus:border-blue-500"
       />
 
       {list.length > 0 && (
-        <div className="fixed z-50 bg-white border w-56 max-h-[200px] overflow-auto">
+        <div className="fixed z-50 bg-white border-2 border-gray-300 w-56 max-h-[200px] overflow-auto shadow-xl rounded">
+          <div className="text-xs text-gray-500 px-2 py-1 border-b bg-gray-50">
+            {list.length} items found
+          </div>
           {list.map((item, idx) => (
             <div
-              key={idx}
-              className={`px-2 py-1 cursor-pointer ${
-                idx === activeIndex ? "bg-blue-100" : "hover:bg-gray-100"
+              key={`${item.id}`}
+              className={`px-2 py-2 cursor-pointer transition font-medium ${
+                idx === activeIndex
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-900 hover:bg-blue-100"
               }`}
-             onMouseDown={(e) => {
-              e.preventDefault(); // ✅ THIS IS THE FIX
-              selectedValueRef.current = item.name;
-              setValue(item.name);
-              setList([]);
-              props.stopEditing(false);
-            }}
-
+              onMouseDown={(e) => {
+                e.preventDefault();
+                console.log("🖱️ Clicked:", item.name);
+                selectItem(item);
+              }}
+              onMouseEnter={() => {
+                setActiveIndex(idx);
+                activeIndexRef.current = idx;
+              }}
             >
               {item.name}
             </div>
@@ -118,10 +214,8 @@ const ItemNameEditor = React.forwardRef((props, ref) => {
 
 
 
-
 export default function SaleInvoiceItemsGrid() {
   const gridRef = useRef(null);
-
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
@@ -153,6 +247,9 @@ const [rowData, setRowData] = useState(() =>
     amount: "",
   }))
 );
+
+
+
 
 
 
@@ -198,9 +295,24 @@ const billColumnDefs = useMemo(() => [
         filter: false,
         resizable: false,
       },
-      { headerName: "ITEM NAME", field: "item_name", flex: 1.2, minWidth: 220, editable: true, cellEditor: ItemNameEditor,  onCellValueChanged: (params) => {
-    console.log("SAVED VALUE 👉", params.newValue);
-  } },
+      {
+        headerName: "ITEM NAME",
+        field: "item",                
+        editable: true,
+        cellEditor: ItemNameEditor,
+
+        valueFormatter: (p) => p.value?.name || "",
+
+        onCellValueChanged: (params) => {
+          const item = params.newValue;
+          if (!item) return;
+
+          params.data.item_id = item.id;
+          params.data.item_name = item.name;
+
+          console.log("✅ FINAL ROW DATA", params.data);
+        },
+      },
       { headerName: "QUANTITY", field: "quantity", flex: 1, minWidth: 160 },
       {
         headerName: "SHORT NARRATION",
@@ -227,7 +339,7 @@ const billColumnDefs = useMemo(() => [
   const pinnedBottomRowData = useMemo(() => {
     return [
       {
-        item_name: "Total",
+         item: { name: "Total" }, // 🔥 SAME STRUCTURE
         quantity: 0,
         short_narration: "",
         unit: "",

@@ -249,3 +249,78 @@ body{
 
 
 
+/* =========================================
+   INVENTORY STATUS GRID – ERP EXACT
+========================================= */
+
+.inventory-status-grid {
+  --ag-border-color: #e5e7eb;
+  --ag-header-background-color: #ffffff;
+  --ag-font-size: 13px;
+}
+
+/* ===== HEADER ===== */
+
+/* top & bottom header border */
+.inventory-status-grid .ag-header {
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.inventory-status-grid .ag-header-cell-label {
+  color: #111827 !important;   /* ERP dark text */
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}
+/* header cells vertical borders */
+.inventory-status-grid .ag-header-cell,
+.inventory-status-grid .ag-header-group-cell {
+  border-right: 1px solid #e5e7eb !important;
+}
+
+/* group header row (AVAILABLE) */
+.inventory-status-grid .ag-header-group-cell {
+  justify-content: center !important;
+ 
+}
+
+/* ===== BODY ===== */
+
+/* EACH ROW BORDER (THIS WAS MISSING) */
+.inventory-status-grid .ag-row {
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* EACH CELL BORDER */
+.inventory-status-grid .ag-cell {
+  border-right: 1px solid #e5e7eb !important;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  display: flex;
+  align-items: center;
+}
+
+/* LEFT BORDER FOR FIRST COLUMN */
+.inventory-status-grid .ag-row .ag-cell:first-child {
+  border-left: 1px solid #e5e7eb !important;
+}
+
+/* REMOVE DOUBLE BORDER FEEL */
+.inventory-status-grid .ag-root-wrapper {
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+}
+
+/* EMPTY STATE ROW ALIGNMENT */
+.inventory-status-grid .ag-overlay-no-rows-center {
+  border-top: 1px solid #e5e7eb;
+}
+
+.inventory-status-grid .inv-header-center {
+  justify-content: center !important;
+  text-align: center !important;
+}
+.inventory-status-grid .ag-header-group-cell-label {
+  color: #111827 !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+}

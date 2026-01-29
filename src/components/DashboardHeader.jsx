@@ -286,7 +286,7 @@ const [openBranch, setOpenBranch] = useState(false);
                                       <li key={j}>
                                         <Link
                                           to="/company/dashboard/transactions/sale-invoice"
-                                          className="hover:text-primary font-semibold"
+                                          className="hover:text-primary font-bold"
                                           onClick={() => setOpenMegaMenu(null)}
                                         >
                                           {label}
@@ -294,6 +294,25 @@ const [openBranch, setOpenBranch] = useState(false);
                                       </li>
                                     );
                                   }
+
+                                   // ✅ INVENTORY STATUS
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === "STOCK" &&
+                                        label === "Inventory Status"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/inventory-status"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              {label}
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
 
                                   return <li key={j}>{label}</li>;
                                 })}
