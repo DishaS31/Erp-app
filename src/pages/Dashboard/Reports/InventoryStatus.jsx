@@ -83,6 +83,9 @@ export default function InventoryStatus() {
   /* ===== DATE ===== */
   const [fromDate, setFromDate] = useState(new Date("2026-01-01"));
   const [toDate, setToDate] = useState(new Date("2026-01-28"));
+  const [showDatePopup, setShowDatePopup] = useState(false);
+  
+
 
   /* ===== PAGINATION (UI ONLY) ===== */
   const [page] = useState(0);
@@ -195,9 +198,19 @@ const [subView, setSubView] = useState("item_wise");
           />
         </FieldBox>
 
+        {/* DATE OPTIONS ICON */}
+        <button
+          onClick={() => setShowDatePopup(true)}
+          className="h-[35px] w-[38px] flex items-center justify-center
+                    border border-primary text-primary rounded-md bg-white"
+        >
+          <Icon name="date_range" className="text-[20px]" />
+        </button>
+
         <button className="h-[35px] px-6 bg-primary text-white font-bold rounded-md text-tiny">
           GO
         </button>
+
 
         <div className="flex gap-4 ml-4 flex-wrap">
           <CheckItem label="Inwards" />
@@ -385,6 +398,122 @@ const [subView, setSubView] = useState("item_wise");
           AVG
         </span>
       </div>
+
+    {showDatePopup && (
+      <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-start">
+        <div
+          className="
+            mt-[60px]
+            w-[820px]
+            bg-white
+            rounded-[14px]
+            border-2 border-primary
+            shadow-xl
+            animate-date-popup
+            px-6 py-5
+          "
+        >
+          {/* CONTENT */}
+          <div className="flex gap-6 items-start">
+
+            {/* LEFT SIDE */}
+            <div className="w-[55%]">
+              <div className="grid grid-cols-4 gap-2 text-tiny font-bold text-black">
+
+                {["APR","JUL","OCT","JAN","MAY","AUG","NOV","FEB","JUN","SEP","DEC","MAR"].map(m => (
+                  <button
+                    key={m}
+                    className="h-[36px] bg-[#e2f6dc] rounded-md hover:bg-[#d1efc8]"
+                  >
+                    {m}
+                  </button>
+                ))}
+
+                {["Q1","Q2","Q3","Q4"].map(q => (
+                  <button
+                    key={q}
+                    className="h-[36px] bg-[#bfeab1] rounded-md font-bold"
+                  >
+                    {q}
+                  </button>
+                ))}
+
+                <button className="h-[36px] bg-[#d6e8fa] rounded-md font-bold">H1</button>
+                <button className="h-[36px] bg-[#d6e8fa] rounded-md font-bold">H2</button>
+              </div>
+
+              <div className="mt-3 flex items-center gap-2 text-[13px] font-bold text-black">
+                <input type="checkbox" className="h-[15px] w-[15px]" />
+                <span>TILL PERIOD</span>
+              </div>
+            </div>
+
+            {/* RIGHT SIDE */}
+            <div className="w-[45%] space-y-3">
+
+              {/* FY */}
+              <div className="flex items-center h-[36px] border border-[#cfd6e4] rounded-md overflow-hidden bg-[#eff2f6]">
+                <button className="w-[36px] h-full border-r text-[25px]">‹</button>
+                <div className="flex-1 text-center text-[14px] font-bold">
+                  FY: 2025 - 26
+                </div>
+                <button className="w-[36px] h-full border-l text-[25px]">›</button>
+              </div>
+
+              {/* FROM */}
+              <div className="flex items-center gap-3">
+                <label className="w-[55px] text-[16px] font-bold">From</label>
+                <input
+                  value="01-01-2026"
+                  readOnly
+                  className="flex-1 h-[36px] px-3 border border-[#cfd6e4] rounded-md text-[13px] font-semibold"
+                />
+              </div>
+
+              {/* TO + TILL DATE */}
+              <div className="flex items-center gap-3">
+                <label className="w-[55px] text-[16px] font-bold">To</label>
+                <input
+                  value="31-03-2026"
+                  readOnly
+                  className="flex-1 h-[36px] px-3 border border-[#cfd6e4] rounded-md text-[13px] font-semibold"
+                />
+              
+              </div>
+              <div className="flex justify-end">
+                  <button className="h-[36px] px-4 border border-[#cfd6e4] rounded-md text-[13px] font-bold whitespace-nowrap bg-[#eff2f6] text-black">
+                  TILL DATE
+                </button>
+              </div>
+              
+            </div>
+          </div>
+
+          {/* FOOTER */}
+          <div className="flex justify-center gap-4 mt-4">
+            <button
+              onClick={() => setShowDatePopup(false)}
+              className="px-8 py-2 bg-[#1aa10a] text-white rounded-md text-[14px] font-bold"
+            >
+              GO
+            </button>
+            <button
+              onClick={() => setShowDatePopup(false)}
+              className="px-8 py-2 bg-[#2f3542] text-white rounded-md text-[14px] font-bold"
+            >
+              Quit
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
+
+
+
     </div>
+    
+    
+
   );
 }

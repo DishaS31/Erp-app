@@ -18,7 +18,16 @@ import CompanyAccess from "./pages/CompanyAccess";
 import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import SaleInvoice from "./pages/Dashboard/Transactions/SaleInvoice";
+import PaymentVoucher from "./pages/Dashboard/Transactions/PaymentVoucher";
+import ReceiptVoucher from "./pages/Dashboard/Transactions/ReceiptVoucher";
+import ContraVoucher from "./pages/Dashboard/Transactions/ContraVoucher";
+import JournalVoucher from"./pages/Dashboard/Transactions/JournalVoucher";
+import MemorandumVoucher from "./pages/Dashboard/Transactions/MemorandumVoucher";
 import InventoryStatus from "./pages/Dashboard/Reports/InventoryStatus";
+import DayBook from "./pages/Dashboard/Reports/DayBook";
+import BalanceSheet from "./pages/Dashboard/Reports/BalanceSheet";
+
+
 
 
 
@@ -49,7 +58,15 @@ const App = () => {
       <Route path="company/dashboard" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />
         <Route path="transactions/sale-invoice" element={<SaleInvoice />} />
-         <Route path="reports/inventory-status" element={<InventoryStatus />} />
+        <Route path="transactions/payments"  element={<PaymentVoucher />}/>
+        <Route path="transactions/receipts" element={<ReceiptVoucher />} />
+        <Route path="transactions/contra" element={<ContraVoucher />} />
+        <Route path="transactions/journal" element={<JournalVoucher />}/>
+        <Route path="transactions/memorandum" element={<MemorandumVoucher />} />
+        <Route path="reports/inventory-status" element={<InventoryStatus />} />
+        <Route path="reports/day-book" element={<DayBook />} />
+        <Route path="reports/balance-sheet" element={<BalanceSheet />} />
+        
       </Route>
 
     </Routes>

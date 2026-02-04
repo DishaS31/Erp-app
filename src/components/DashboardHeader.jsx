@@ -295,6 +295,98 @@ const [openBranch, setOpenBranch] = useState(false);
                                     );
                                   }
 
+                                  if (
+                                      item.key === "transactions" &&
+                                      section.title === "BANKING" &&
+                                      label === "Payments"
+                                    ) {
+                                      return (
+                                        <li key={j}>
+                                          <Link
+                                            to="/company/dashboard/transactions/payments"
+                                            className="hover:text-primary font-bold"
+                                            onClick={() => setOpenMegaMenu(null)}
+                                          >
+                                            Payments
+                                          </Link>
+                                        </li>
+                                      );
+                                    }
+
+                                    if (
+                                      item.key === "transactions" &&
+                                      section.title === "BANKING" &&
+                                      label === "Receipts"
+                                    ) {
+                                      return (
+                                        <li key={j}>
+                                          <Link
+                                            to="/company/dashboard/transactions/receipts"
+                                            className="hover:text-primary font-bold"
+                                            onClick={() => setOpenMegaMenu(null)}
+                                          >
+                                            Receipts
+                                          </Link>
+                                        </li>
+                                      );
+                                    }
+
+                                    if (
+                                      item.key === "transactions" &&
+                                      section.title === "BANKING" &&
+                                      label === "Contra"
+                                    ) {
+                                      return (
+                                        <li key={j}>
+                                          <Link
+                                            to="/company/dashboard/transactions/contra"
+                                            className="hover:text-primary font-bold"
+                                            onClick={() => setOpenMegaMenu(null)}
+                                          >
+                                            Contra
+                                          </Link>
+                                        </li>
+                                      );
+                                    }
+
+                                    if (
+                                      item.key === "transactions" &&
+                                      section.title === "BANKING" &&
+                                      label === "Journal"
+                                    ) {
+                                      return (
+                                        <li key={j}>
+                                          <Link
+                                            to="/company/dashboard/transactions/journal"
+                                            className="hover:text-primary font-bold"
+                                            onClick={() => setOpenMegaMenu(null)}
+                                          >
+                                            Journal
+                                          </Link>
+                                        </li>
+                                      );
+                                    }
+                                    
+                                    if (
+                                      item.key === "transactions" &&
+                                      section.title === "BANKING" &&
+                                      label === "Memorandum"
+                                    ) {
+                                      return (
+                                        <li key={j}>
+                                          <Link
+                                            to="/company/dashboard/transactions/memorandum"
+                                            className="hover:text-primary font-bold"
+                                            onClick={() => setOpenMegaMenu(null)}
+                                          >
+                                            Memorandum
+                                          </Link>
+                                        </li>
+                                      );
+                                    }
+
+
+
                                    // ✅ INVENTORY STATUS
                                       if (
                                         item.key === "reports" &&
@@ -313,6 +405,45 @@ const [openBranch, setOpenBranch] = useState(false);
                                           </li>
                                         );
                                       }
+
+                                      // ✅ DAY BOOK
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === " BOOKS" &&
+                                        label === "Day Book"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/day-book"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              {label}
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === "FINAL ACCOUNT" &&
+                                        label === "Balance Sheet"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/balance-sheet"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Balance Sheet
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+
 
                                   return <li key={j}>{label}</li>;
                                 })}

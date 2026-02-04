@@ -802,7 +802,15 @@ const handleLogout = async () => {
 
                  
                 {/* COMPANY LIST */}
-                <div className="space-y-2 text-[14px] text-[#3e465b]">
+                <div
+                  className="
+                    space-y-2
+                    text-[14px] text-[#3e465b]
+                    max-h-[260px]     
+                    overflow-y-auto
+                    pr-2                
+                  "
+                >
 
                   {companiesLoading && (
                     <p className="text-xs text-gray-500">Loading companies...</p>

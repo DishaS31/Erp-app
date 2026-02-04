@@ -324,3 +324,101 @@ body{
   font-weight: 500 !important;
   font-size: 13px !important;
 }
+
+@keyframes datePopup {
+  0% {
+    opacity: 0;
+    transform: translateY(-25px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-date-popup {
+  animation: datePopup 0.28s ease-out forwards;
+}
+/* ===== FIX react-datepicker ABOVE GRID ===== */
+.react-datepicker-popper,
+.daybook-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+.react-datepicker {
+  font-size: 13px;
+}
+
+
+/* =========================================
+   DAY BOOK GRID – FINAL OVERRIDE (ONLY THIS)
+========================================= */
+
+.daybook-grid {
+  --ag-font-size: 13px;   /* ✅ force font size */
+  --ag-foreground-color: #333; /* ✅ text color */
+}
+
+/* header text */
+.daybook-grid .ag-header-cell-label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+}
+
+/* body cells */
+.daybook-grid .ag-cell {
+  font-size: 13px !important;
+  color: #333 !important;
+}
+
+/* =========================================
+   PAYMENT VOUCHER GRID – ROW COLORS (SAFE)
+========================================= */
+
+
+
+/* Selected row – same green tone */
+.payment-voucher-grid .row-selected-green .ag-cell {
+  background-color: rgb(var(--color-primary) / 0.12) !important;
+}
+
+/* Pinned bottom Total row (light blue like ERP) */
+.payment-voucher-grid .pinned-total-row .ag-cell {
+  background-color: #e6eff4 !important;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Disable hover override on pinned row */
+.payment-voucher-grid .pinned-total-row:hover .ag-cell {
+  background-color: #e6eff4 !important;
+}
+.payment-voucher-grid .ag-cell {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+/* # COLUMN (LEFT PINNED) EXTRA COMPACT */
+.payment-voucher-grid .ag-cell-last-left-pinned {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  text-align: center;
+}
+.payment-voucher-grid .ag-header-cell-label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #333 !important;  /* dark ERP black */
+  letter-spacing: 0.2px;
+}
+
+/* ONLY Balance Sheet – Last Row */
+.balance-grid .bs-last-row {
+  background-color: #eef0ff !important; /* same as image */
+  font-weight: 700;
+}
+
+/* amount thoda strong */
+.balance-grid .bs-last-row .ag-cell {
+  color: #111827;
+}

@@ -11,6 +11,7 @@ const ITEM_MASTER = Array.from({ length: 150000 }).map((_, i) => ({
 
 
 
+
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const ItemNameEditor = React.forwardRef((props, ref) => {
@@ -99,9 +100,16 @@ useEffect(() => {
     // 🔥 CRITICAL: Update grid cell BEFORE stopping editing
     props.node.setDataValue("item", item);
     console.log("📊 Grid cell updated immediately");
-    
+
     // Trigger onCellValueChanged by stopping edit
     props.stopEditing(true);
+    
+    // ✅ Trigger navigation from editor context after edit stops
+    if (props.context?.navigateToNextCell) {
+      setTimeout(() => {
+        props.context.navigateToNextCell(props.node.rowIndex, "item");
+      }, 100);
+    }
   };
 
 const handleBlur = () => {
@@ -216,8 +224,42 @@ const handleBlur = () => {
 
 export default function SaleInvoiceItemsGrid() {
   const gridRef = useRef(null);
+  const lastFocusedCellRef = useRef(null); // Track which cell had first Enter
+  const saveBtnRef = useRef(null);
+
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+
+  // ================= GRID NAVIGATION LOGIC =================
+  const editableColumns = ["item", "quantity", "short_narration", "unit", "price", "amount"];
+
+  const navigateToNextCell = (rowIndex, currentColId) => {
+    const currentColIndex = editableColumns.indexOf(currentColId);
+    if (currentColIndex === -1) return;
+
+    let nextColId;
+    let nextRowIndex = rowIndex;
+
+    if (currentColIndex < editableColumns.length - 1) {
+      // Move to next column in same row
+      nextColId = editableColumns[currentColIndex + 1];
+    } else {
+      // Move to first editable column in next row
+      nextRowIndex = rowIndex + 1;
+      nextColId = editableColumns[0];
+    }
+
+    const totalRows = gridRef.current?.api?.getDisplayedRowCount();
+    if (!totalRows || nextRowIndex >= totalRows) return;
+
+    // Set the focused cell ID so next Enter knows this cell was just focused
+    lastFocusedCellRef.current = `${nextRowIndex}-${nextColId}`;
+    
+    // Small delay to ensure grid is ready
+    setTimeout(() => {
+      gridRef.current?.api?.setFocusedCell(nextRowIndex, nextColId);
+    }, 50);
+  };
 
   // ================= BILL SUNDRY PAGINATION STATE =================
 const [billPage, setBillPage] = useState(1);
@@ -249,18 +291,266 @@ const [rowData, setRowData] = useState(() =>
 );
 
 
+const suppressKeyboardEvent = (params) => {
+  const { event, api, node, column } = params;
+
+  if (event.key !== "Enter") return false;
+
+  const isEditing = api.getEditingCells().length > 0;
+  const currentCellId = `${node.rowIndex}-${column.getColId()}`;
+  const lastCellId = lastFocusedCellRef.current;
+
+  console.log("🔑 Enter pressed:", { currentCellId, lastCellId, isEditing });
+
+  // 🔒 CASE 1: Not editing yet → FIRST Enter (only focus, don't edit)
+  if (!isEditing && lastCellId !== currentCellId) {
+    console.log("📍 FIRST ENTER - Just focus, no edit");
+    event.preventDefault();
+    lastFocusedCellRef.current = currentCellId; // Mark this cell as focused
+    // Don't start editing, just suppress the default
+    return true; // Suppress default edit behavior
+  }
+
+  // ✏️ CASE 2: Second Enter on SAME cell → start editing
+  if (!isEditing && lastCellId === currentCellId) {
+    console.log("✏️ SECOND ENTER - Start editing");
+    event.preventDefault();
+    lastFocusedCellRef.current = null; // Reset flag
+    
+    api.startEditingCell({
+      rowIndex: node.rowIndex,
+      colKey: column.getColId(),
+    });
+    return true; // Suppress default (we started manually)
+  }
+
+  // ➡️ CASE 3: Already editing → move to NEXT cell (only focus, no edit)
+  console.log("➡️ THIRD ENTER - Move to next cell (focus only)");
+  event.preventDefault();
+  lastFocusedCellRef.current = null; // Reset flag
+
+  const editableCols = columnDefs.filter((c) => c.editable);
+  const idx = editableCols.findIndex(
+    (c) => c.field === column.getColId()
+  );
+
+  const nextCol = editableCols[idx + 1];
+
+  if (nextCol) {
+    // Just focus the next cell, don't start editing
+    lastFocusedCellRef.current = `${node.rowIndex}-${nextCol.field}`;
+    api.setFocusedCell(node.rowIndex, nextCol.field);
+  } else {
+    // Move to first editable column in next row (focus only)
+    const nextRowIndex = node.rowIndex + 1;
+    const totalRows = api.getDisplayedRowCount();
+
+    // SPECIAL CASE: if the CURRENT row's ALL editable cells are empty,
+    // pressing Enter on the last editable cell should focus the Bill Sundry grid instead of moving to next row.
+    const currentRowNode = api.getDisplayedRowAtIndex(node.rowIndex);
+    const currentRowData = currentRowNode?.data || {};
+    const allEmptyCurrentRow = editableCols.every((c) => {
+      const v = currentRowData[c.field];
+      if (c.field === "item") {
+        return !v || !v.name;
+      }
+      return v === undefined || v === null || v === "";
+    });
+
+    if (allEmptyCurrentRow && billGridRef?.current?.api) {
+      // Focus Bill Sundry grid first cell (no edit)
+      billGridRef.current.api.setFocusedCell(0, "bill_name");
+      return true;
+    }
+
+    if (nextRowIndex < totalRows) {
+      lastFocusedCellRef.current = `${nextRowIndex}-${editableCols[0].field}`;
+      api.setFocusedCell(nextRowIndex, editableCols[0].field);
+    }
+  }
+
+  return true; // Suppress default navigation
+};
+
+
+
+const suppressBillKeyboardEvent = (params) => {
+  const { event, api, node, column } = params;
+
+  if (event.key !== "Enter") return false;
+  event.preventDefault();
+
+  const billEditableCols = ["bill_name", "amount"];
+  const currentColId = column.getColId();
+  const colIndex = billEditableCols.indexOf(currentColId);
+
+  const rowData = node.data || {};
+  const allEmpty =
+    (!rowData.bill_name || rowData.bill_name === "") &&
+    (!rowData.amount || rowData.amount === "");
+
+  // 👉 FIRST ENTER → start editing
+  if (api.getEditingCells().length === 0) {
+    api.startEditingCell({
+      rowIndex: node.rowIndex,
+      colKey: currentColId,
+    });
+    return true;
+  }
+
+  // stop editing before navigation
+  api.stopEditing();
+
+  // 👉 LAST CELL + BOTH EMPTY → SAVE button focus
+  if (colIndex === billEditableCols.length - 1 && allEmpty) {
+    setTimeout(() => {
+      saveBtnRef.current?.focus();
+    }, 50);
+    return true;
+  }
+
+  // 👉 normal next column
+  const nextCol = billEditableCols[colIndex + 1];
+  if (nextCol) {
+    api.setFocusedCell(node.rowIndex, nextCol);
+    return true;
+  }
+
+  // 👉 next row first column
+  const nextRow = node.rowIndex + 1;
+  if (api.getDisplayedRowAtIndex(nextRow)) {
+    api.setFocusedCell(nextRow, billEditableCols[0]);
+  }
+
+  return true;
+};
+
+
+// 🔥 DELETE LOGIC HELPERS
+const editableFields = [
+  "item",
+  "quantity",
+  "short_narration",
+  "unit",
+  "price",
+  "amount",
+];
+
+const isRowEmpty = (row) => {
+  return editableFields.every((f) => {
+    if (f === "item") {
+      return !row.item || !row.item.name;
+    }
+    return row[f] === "" || row[f] == null;
+  });
+};
+
+const handleCellKeyDown = (params) => {
+  const { event, api, node, column } = params;
+
+  // ❌ pinned Total row
+  if (node.rowPinned) return;
+
+  // ❌ editor 
+  if (api.getEditingCells().length > 0) return;
+
+  const key = event.key.toLowerCase();
+  const field = column.getColId();
+
+  // ===============================
+  // 🔥 CTRL + D  → FORCE ROW DELETE
+  // ===============================
+  if (event.ctrlKey && key === "d") {
+    event.preventDefault();
+
+    setRowData((prev) =>
+      prev.filter((_, idx) => idx !== node.rowIndex)
+    );
+
+    return;
+  }
+
+  // ===============================
+  // DELETE / BACKSPACE
+  // ===============================
+  if (key !== "delete" && key !== "backspace") return;
+
+  event.preventDefault();
+
+  // ✅ ROW EMPTY → ROW DELETE
+  if (isRowEmpty(node.data)) {
+    setRowData((prev) =>
+      prev.filter((_, idx) => idx !== node.rowIndex)
+    );
+    return;
+  }
+
+  // ❌ ROW NOT EMPTY → ONLY CELL CLEAR
+  if (editableFields.includes(field)) {
+    if (field === "item") {
+      node.setDataValue("item", null);
+      node.setDataValue("item_id", null);
+      node.setDataValue("item_name", "");
+    } else {
+      node.setDataValue(field, "");
+    }
+  }
+};
+
+
+const handleBillCellKeyDown = (params) => {
+  const { event, api, node, column } = params;
+
+  if (node.rowPinned) return;
+  if (api.getEditingCells().length > 0) return;
+
+  const key = event.key.toLowerCase();
+  const field = column.getColId();
+
+  // 🔥 CTRL + D → FORCE ROW DELETE
+  if (event.ctrlKey && key === "d") {
+    event.preventDefault();
+
+    setBillRowData((prev) =>
+      prev.filter((_, idx) => idx !== node.rowIndex)
+    );
+    return;
+  }
+
+  // DELETE / BACKSPACE
+  if (key !== "delete" && key !== "backspace") return;
+  event.preventDefault();
+
+  const row = node.data;
+  const isEmpty =
+    (!row.bill_name || row.bill_name === "") &&
+    (!row.amount || row.amount === "");
+
+  // ✅ row empty → delete row
+  if (isEmpty) {
+    setBillRowData((prev) =>
+      prev.filter((_, idx) => idx !== node.rowIndex)
+    );
+    return;
+  }
+
+  // ❌ row not empty → clear only cell
+  node.setDataValue(field, "");
+};
 
 
 
 
 const billGridRef = useRef(null);
 
-const billRowData = useMemo(() => {
-  return Array.from({ length: 10 }).map(() => ({
+const [billRowData, setBillRowData] = useState(() =>
+  Array.from({ length: 10 }).map(() => ({
     bill_name: "",
     amount: "",
-  }));
-}, []);
+  }))
+);
+
+
 
 const billColumnDefs = useMemo(() => [
   {
@@ -274,12 +564,14 @@ const billColumnDefs = useMemo(() => [
     field: "bill_name",
     flex: 1,
     minWidth: 250,
+     editable: true,
   },
   {
     headerName: "AMOUNT (₹)",
     field: "amount",
     flex: 1,
     minWidth: 180,
+     editable: true,
   },
 ], []);
 
@@ -313,16 +605,17 @@ const billColumnDefs = useMemo(() => [
           console.log("✅ FINAL ROW DATA", params.data);
         },
       },
-      { headerName: "QUANTITY", field: "quantity", flex: 1, minWidth: 160 },
+      { headerName: "QUANTITY", field: "quantity", flex: 1, minWidth: 160, editable: true },
       {
         headerName: "SHORT NARRATION",
         field: "short_narration",
         flex: 1.2,
         minWidth: 220,
+        editable: true,
       },
-      { headerName: "UNIT", field: "unit", flex: 1, minWidth: 160 },
-      { headerName: "PRICE", field: "price", flex: 1, minWidth: 180 },
-      { headerName: "AMOUNT(₹)", field: "amount", flex: 1, minWidth: 180 },
+      { headerName: "UNIT", field: "unit", flex: 1, minWidth: 160, editable: true },
+      { headerName: "PRICE", field: "price", flex: 1, minWidth: 180, editable: true },
+      { headerName: "AMOUNT(₹)", field: "amount", flex: 1, minWidth: 180, editable: true, },
     ];
   }, []);
 
@@ -360,6 +653,9 @@ const billPinnedBottomRowData = useMemo(() => {
 }, []);
 
 
+
+
+
   return (
     
    <div className="space-y-6">
@@ -383,9 +679,15 @@ const billPinnedBottomRowData = useMemo(() => {
               theme="legacy"
               rowData={rowData}
               columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
+               defaultColDef={{
+                ...defaultColDef,
+                suppressKeyboardEvent,
+              }}
+              context={{ navigateToNextCell }}
               stopEditingWhenCellsLoseFocus={false}
-
+              onCellKeyDown={handleCellKeyDown}  
+              suppressClickEdit={true}
+              singleClickEdit={false}  
               pagination={false}
               headerHeight={36}
               rowHeight={34}
@@ -524,7 +826,11 @@ const billPinnedBottomRowData = useMemo(() => {
                     sortable: false,
                     resizable: true,
                     filter: false,
+                    suppressKeyboardEvent: suppressBillKeyboardEvent,
                   }}
+                  suppressClickEdit={true} 
+                  onCellKeyDown={handleBillCellKeyDown} 
+                  singleClickEdit={false} 
                   pagination={false}
                   domLayout="autoHeight"
                   rowHeight={34}
@@ -616,6 +922,7 @@ const billPinnedBottomRowData = useMemo(() => {
         <div className="flex justify-center gap-6 py-8">
 
           <button
+           ref={saveBtnRef}
             type="button"
             className="min-w-[140px] px-8 py-3
                       rounded-md text-white font-extrabold text-[14px]
