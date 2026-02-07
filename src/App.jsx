@@ -26,7 +26,12 @@ import MemorandumVoucher from "./pages/Dashboard/Transactions/MemorandumVoucher"
 import InventoryStatus from "./pages/Dashboard/Reports/InventoryStatus";
 import DayBook from "./pages/Dashboard/Reports/DayBook";
 import BalanceSheet from "./pages/Dashboard/Reports/BalanceSheet";
-
+import ProfitLoss from "./pages/Dashboard/Reports/ProfitLoss";
+import TrialBalance from "./pages/Dashboard/Reports/TrialBalance";
+import AccountGroupList from "./pages/Dashboard/Reports/AccountGroupList";
+import AccountLedger from "./pages/Dashboard/Reports/AccountLedger";
+import StockLedger from "./pages/Dashboard/Reports/StockLedger";
+import GstSummary from "./pages/Dashboard/GST/GstSummary";
 
 
 
@@ -66,7 +71,14 @@ const App = () => {
         <Route path="reports/inventory-status" element={<InventoryStatus />} />
         <Route path="reports/day-book" element={<DayBook />} />
         <Route path="reports/balance-sheet" element={<BalanceSheet />} />
-        
+        <Route path="reports/profit-loss" element={<ProfitLoss />} />
+        <Route path="reports/trial-balance" element={<TrialBalance />} />
+        <Route path="reports/account-ledger" element={<AccountLedger />} />
+        <Route path="reports/stock-ledger"element={<StockLedger />}/>
+        <Route path="reports/account-group-list" element={<AccountGroupList />} />
+        <Route path="gst/gst-summary" element={<GstSummary />}/>
+
+
       </Route>
 
     </Routes>

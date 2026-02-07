@@ -443,6 +443,99 @@ const [openBranch, setOpenBranch] = useState(false);
                                         );
                                       }
 
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === "FINAL ACCOUNT" &&
+                                        label === "Profit & Loss Accounts"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/profit-loss"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Profit & Loss Accounts
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      if (
+                                          item.key === "reports" &&
+                                          section.title === "FINAL ACCOUNT" &&
+                                          label === "Trial Balance"
+                                        ) {
+                                          return (
+                                            <li key={j}>
+                                              <Link
+                                                to="/company/dashboard/reports/trial-balance"
+                                                className="hover:text-primary font-bold"
+                                                onClick={() => setOpenMegaMenu(null)}
+                                              >
+                                                Trial Balance
+                                              </Link>
+                                            </li>
+                                          );
+                                        }
+
+                                        if (
+                                            item.key === "reports" &&
+                                            section.title === "Accounts" &&
+                                            label === "Account Ledger"
+                                          ) {
+                                            return (
+                                              <li key={j}>
+                                                <Link
+                                                  to="/company/dashboard/reports/account-ledger"
+                                                  className="hover:text-primary font-bold"
+                                                  onClick={() => setOpenMegaMenu(null)}
+                                                >
+                                                  Account Ledger
+                                                </Link>
+                                              </li>
+                                            );
+                                          }
+
+                                          // ✅ STOCK LEDGER
+                                        if (
+                                          item.key === "reports" &&
+                                          section.title === "STOCK" &&
+                                          label === "Stock Ledger"
+                                        ) {
+                                          return (
+                                            <li key={j}>
+                                              <Link
+                                                to="/company/dashboard/reports/stock-ledger"
+                                                className="hover:text-primary font-bold"
+                                                onClick={() => setOpenMegaMenu(null)}
+                                              >
+                                                Stock Ledger
+                                              </Link>
+                                            </li>
+                                          );
+                                        }
+                                        
+                                        // ✅ GST SUMMARY
+                                      if (
+                                        item.key === "gst" &&
+                                        section.title === " PERIODIC" &&
+                                        label === "GST Summary"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/gst/gst-summary"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              GST Summary
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+
 
 
                                   return <li key={j}>{label}</li>;
