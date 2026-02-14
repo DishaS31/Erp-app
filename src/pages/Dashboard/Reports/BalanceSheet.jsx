@@ -137,14 +137,14 @@ export default function BalanceSheet() {
     return;
   }
 
-  // ❌ Condensed view me drill-down nahi
+
   if (viewType === "Condensed") return;
 
-  // ✅ Sirf Liability / Asset text pe double click
+ 
   if (field === "liability" || field === "asset" || field === "label") {
     navigate("/company/dashboard/reports/account-group-list", {
       state: {
-        groupName: value.replace(/^›\s*/, ""), // arrow hata diya
+        groupName: value.replace(/^›\s*/, ""), 
         fromDate,
         toDate,
       },

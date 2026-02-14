@@ -122,7 +122,34 @@ const MEGA_MENU_DATA = {
       items: [],
     },
   ],
+
+  register: [
+  {
+    title: "OUTWARD",
+    icon: "difference",
+    items: ["Sales Register", "Sales Return Register"],
+  },
+  {
+    title: "VOUCHER",
+    icon: "confirmation_number",
+    items: [
+      "Payment Register",
+      "Receipt Register",
+      "Contra Register",
+      "Journal Register",
+      "Other Acc. Register",
+    ],
+  },
+  {
+    title: "INWARDS",
+    icon: "add_chart",
+    items: ["Purchase Register", "Purchase Return Register"],
+  },
+],
+
 };
+
+
 
 
 const DashboardHeader = () => {
@@ -165,6 +192,14 @@ const DashboardHeader = () => {
       key: "tds",
       megaMenu: true,
     },
+    
+    {
+      label: "Register",
+      key: "register",
+      megaMenu: true,
+    },
+
+
     {
       label: "Reports",
       key: "reports",
@@ -276,6 +311,235 @@ const [openBranch, setOpenBranch] = useState(false);
 
                             <ul className="space-y-2 text-tiny text-[#525b75]">
                               {section.items.map((label, j) => {
+
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "COMPANY" &&
+                                    label === "Accounts"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/accounts"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Accounts
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+                                  
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "STOCK" &&
+                                    label === "Items"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/items"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Items
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+                                  
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "STOCK" &&
+                                    label === "Material Centre"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/material-centres"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Material Centre
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+                                 
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "COMPANY" &&
+                                    label === "Voucher Series"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/voucher-series"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Voucher Series
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "COMPANY" &&
+                                    label === "Bill Sundry"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/bill-sundry"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Bill Sundry
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "COMPANY" &&
+                                    label === "Tax Category"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/tax-category"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Tax Category
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "REPORTING" &&
+                                    label === "Cost Centre"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/cost-centre"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Cost Centre
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "REPORTING" &&
+                                    label === "Project"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/projects"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Project
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "REPORTING" &&
+                                    label === "Bill By Bill"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/bill-by-bill"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Bill By Bill
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+
+                                  // ✅ SALES REGISTER LINK
+                                  if (
+                                    item.key === "register" &&
+                                    section.title === "OUTWARD" &&
+                                    label === "Sales Register"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/register/sales-register"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Sales Register
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "REPORTING" &&
+                                    label === "Sub Ledger"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/sub-ledger"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Sub Ledger
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+                                
+
+                                  if (
+                                    item.key === "masters" &&
+                                    section.title === "UTILITY" &&
+                                    label === "Bulk Updation"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/masters/bulk-updation"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Bulk Updation
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+
 
                                   if (
                                     item.key === "transactions" &&

@@ -295,7 +295,7 @@ useEffect(() => {
         }}
         onFocus={() => setShowAccountList(true)}
         onBlur={() => {
-            // delay so item click register ho jaye
+           
             setTimeout(() => setShowAccountList(false), 150);
         }}
         placeholder="Search name..."
@@ -792,7 +792,7 @@ useEffect(() => {
   </div>
 )}
 
-      {/* ================= DATE POPUP (SAME AS IMAGE) ================= */}
+      {/* ================= DATE POPUP ================= */}
       {showDatePopup && (
         <div className="fixed inset-0 z-50 bg-black/40 flex justify-center items-start">
           <div className="mt-[60px] w-[820px] bg-white rounded-[14px] border-2 border-primary shadow-xl px-6 py-5">

@@ -422,3 +422,24 @@ body{
 .balance-grid .bs-last-row .ag-cell {
   color: #111827;
 }
+
+
+.units-grid .ag-cell {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+  display: flex;
+  align-items: center;
+}
+
+/* # column (row number) */
+.units-grid .ag-column-first,
+.units-grid .ag-cell[col-id="0"] {
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+  justify-content: center;
+}
+
+/* checkbox column */
+.units-grid .ag-cell input[type="checkbox"] {
+  margin: 0 !important;
+}

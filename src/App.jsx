@@ -32,6 +32,56 @@ import AccountGroupList from "./pages/Dashboard/Reports/AccountGroupList";
 import AccountLedger from "./pages/Dashboard/Reports/AccountLedger";
 import StockLedger from "./pages/Dashboard/Reports/StockLedger";
 import GstSummary from "./pages/Dashboard/GST/GstSummary";
+import Accounts from "./pages/Dashboard/Masters/Accounts";
+import AccountGroups from "./pages/Dashboard/Masters/AccountGroups";
+import Items from "./pages/Dashboard/Masters/Items";
+import ItemGroups from "./pages/Dashboard/Masters/ItemGroups";
+import Units from "./pages/Dashboard/Masters/Units";
+import StockCategory from "./pages/Dashboard/Masters/StockCategory";
+import MaterialCentres from "./pages/Dashboard/Masters/MaterialCentres";
+import MaterialCentreGroups from "./pages/Dashboard/Masters/MaterialCentreGroups";
+import AddMaterialCentre from "./pages/Dashboard/Masters/AddMaterialCentre";
+import EditMaterialCentre from "./pages/Dashboard/Masters/EditMaterialCentre";
+import AddMaterialCentreGroup from "./pages/Dashboard/Masters/AddMaterialCentreGroup";
+import EditMaterialCentreGroup from "./pages/Dashboard/Masters/EditMaterialCentreGroup";
+import AddStockCategory from "./pages/Dashboard/Masters/AddStockCategory";
+import EditStockCategory from "./pages/Dashboard/Masters/EditStockCategory";
+import AddUnit from "./pages/Dashboard/Masters/AddUnit";
+import EditUnit from "./pages/Dashboard/Masters/EditUnit";
+import AddItemGroup from "./pages/Dashboard/Masters/AddItemGroup";
+import EditItemGroup from "./pages/Dashboard/Masters/EditItemGroup";
+import AddItem from "./pages/Dashboard/Masters/AddItem";
+import EditItem from "./pages/Dashboard/Masters/EditItem";
+import AddAccountGroup from "./pages/Dashboard/Masters/AddAccountGroup";
+import EditAccountGroup from "./pages/Dashboard/Masters/EditAccountGroup";
+import AddAccount from "./pages/Dashboard/Masters/AddAccount";
+import EditAccount from "./pages/Dashboard/Masters/EditAccount";
+import VoucherSeries from "./pages/Dashboard/Masters/VoucherSeries";
+import AddVoucherSeries from "./pages/Dashboard/Masters/AddVoucherSeries";
+import EditVoucherSeries from "./pages/Dashboard/Masters/EditVoucherSeries";
+import BillSundry from "./pages/Dashboard/Masters/BillSundry";
+import AddBillSundry from "./pages/Dashboard/Masters/AddBillSundry";
+import EditBillSundry from "./pages/Dashboard/Masters/EditBillSundry";
+import TaxCategory from "./pages/Dashboard/Masters/TaxCategory";
+import AddTaxCategory from "./pages/Dashboard/Masters/AddTaxCategory";
+import EditTaxCategory from "./pages/Dashboard/Masters/EditTaxCategory";
+import CostCentre from "./pages/Dashboard/Masters/CostCentre";
+import AddCostCentre from "./pages/Dashboard/Masters/AddCostCentre";
+import EditCostCentre from "./pages/Dashboard/Masters/EditCostCentre";
+import CostCentreGroups from "./pages/Dashboard/Masters/CostCentreGroups";
+import AddCostCentreGroup from "./pages/Dashboard/Masters/AddCostCentreGroup";
+import EditCostCentreGroup from "./pages/Dashboard/Masters/EditCostCentreGroup";
+import Projects from "./pages/Dashboard/Masters/Projects";
+import AddProject from "./pages/Dashboard/Masters/AddProject";
+import EditProject from "./pages/Dashboard/Masters/EditProject";
+import ProjectGroups from "./pages/Dashboard/Masters/ProjectGroups";
+import AddProjectGroup from "./pages/Dashboard/Masters/AddProjectGroup";
+import EditProjectGroup from "./pages/Dashboard/Masters/EditProjectGroup";
+import BillByBill from "./pages/Dashboard/Masters/BillByBill";
+import SubLedger from "./pages/Dashboard/Masters/SubLedger";
+import BulkUpdation from "./pages/Dashboard/Masters/BulkUpdation";
+import SalesRegister from "./pages/Dashboard/Register/SalesRegister";
+
 
 
 
@@ -77,7 +127,61 @@ const App = () => {
         <Route path="reports/stock-ledger"element={<StockLedger />}/>
         <Route path="reports/account-group-list" element={<AccountGroupList />} />
         <Route path="gst/gst-summary" element={<GstSummary />}/>
+        <Route path="masters/accounts" element={<Accounts />} />
+        <Route path="masters/account-groups" element={<AccountGroups />}/>
+        <Route path="masters/items" element={<Items />}/>
+        <Route path="masters/item-groups" element={<ItemGroups />}/>
+        <Route path="masters/units" element={<Units />} />
+        <Route path="masters/stock-category" element={<StockCategory />}/>
+        <Route path="masters/material-centres"  element={<MaterialCentres />}/>
+        <Route path="masters/material-centre-groups"  element={<MaterialCentreGroups />}/>
+        <Route path="masters/add-material-centre"  element={<AddMaterialCentre />}/>
+        <Route path="masters/material-centres/edit" element={<EditMaterialCentre />} />
+        <Route path="masters/add-material-centre-group" element={<AddMaterialCentreGroup />}/>
+        <Route path="masters/material-centre-groups/edit/:id" element={<EditMaterialCentreGroup />}/>
+        <Route path="masters/add-stock-category"  element={<AddStockCategory />}/>
+        <Route path="masters/stock-category/edit/:id"  element={<EditStockCategory />}/>
+        <Route path="masters/units/add" element={<AddUnit />}/>
+        <Route path="masters/units/edit/:id" element={<EditUnit />}/>
+        <Route path="masters/item-groups/add"  element={<AddItemGroup />}/>
+        <Route path="masters/item-groups/edit" element={<EditItemGroup />}/>
+        <Route path="masters/items/add" element={<AddItem />} />
+        <Route path="masters/items/edit/:id" element={<EditItem />}/>
+        <Route path="masters/account-groups/add" element={<AddAccountGroup />} />
+        <Route path="masters/account-groups/edit/:id" element={<EditAccountGroup />} />
+        <Route path="masters/accounts/add" element={<AddAccount />} />
+        <Route path="masters/accounts/edit/:id" element={<EditAccount />} />
+        <Route path="masters/voucher-series" element={<VoucherSeries />} />
+        <Route path="masters/voucher-series/add" element={<AddVoucherSeries />} />
+        <Route path="masters/voucher-series/edit/:id" element={<EditVoucherSeries />}/>
+        <Route path="masters/bill-sundry" element={<BillSundry />}/>
+        <Route path="masters/bill-sundry/add" element={<AddBillSundry />} />
+        <Route path="masters/bill-sundry/edit" element={<EditBillSundry />} />
+        <Route path="masters/tax-category" element={<TaxCategory />} />
+        <Route path="masters/tax-category/add" element={<AddTaxCategory />} />
+        <Route path="masters/tax-category/edit/:id" element={<EditTaxCategory />} />
+        <Route path="masters/cost-centre" element={<CostCentre />} />
+        <Route path="masters/cost-centre/add" element={<AddCostCentre />} />
+        <Route path="masters/cost-centre/edit" element={<EditCostCentre />} />
+        <Route path="masters/cost-centre-groups" element={<CostCentreGroups />} />
+        <Route path="masters/cost-centre-groups/add" element={<AddCostCentreGroup />}/>
+        <Route path="masters/cost-centre-groups/edit" element={<EditCostCentreGroup />} />
+        <Route path="masters/projects" element={<Projects />} />
+        <Route path="masters/projects/add" element={<AddProject />} />
+        <Route path="masters/projects/edit/:id" element={<EditProject />} />
+        <Route path="masters/project-groups" element={<ProjectGroups />}/>
+        <Route path="masters/project-groups/add"  element={<AddProjectGroup />}/>
+        <Route path="masters/project-groups/edit/:id" element={<EditProjectGroup />}/>
+        <Route path="masters/bill-by-bill" element={<BillByBill />} />
+        <Route path="masters/sub-ledger" element={<SubLedger />}/>
+        <Route path="masters/bulk-updation" element={<BulkUpdation />}/>
+        <Route path="register/sales-register"  element={<SalesRegister />}/>
 
+
+
+
+
+        
 
       </Route>
 

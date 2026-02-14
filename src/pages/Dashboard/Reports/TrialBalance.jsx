@@ -123,13 +123,12 @@ export default function TrialBalance() {
   const field = params.colDef.field;
   const value = params.value;
 
-  // ❌ TOTAL row ignore
+ 
   if (params.data?.isTotal) return;
 
-  // ❌ Amount columns ignore
+
   if (field === "debit" || field === "credit") return;
 
-  // ❌ Parent column pe drill-down nahi
   if (field === "parent") return;
 
   let groupName = "";
@@ -535,7 +534,7 @@ const openingBalanceRowData = useMemo(() => [
       </div>
 
 
-      {/* ===== GRID FILTER BAR (EXACT LIKE IMAGE) ===== */}
+      {/* ===== GRID FILTER BAR  ===== */}
     <div className="flex items-center gap-2 px-3 py-2 border-b bg-white text-[13px]">
       <span className="font-semibold">Filter:</span>
 

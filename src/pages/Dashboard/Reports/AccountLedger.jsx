@@ -196,7 +196,7 @@ export default function AccountLedger() {
   const [showBranchCol, setShowBranchCol] = useState(false);
 
 
-// 🔥 STEP 4: checkbox ke hisaab se columns add / remove
+
 useEffect(() => {
   let cols = [...BASE_COLUMNS];
 

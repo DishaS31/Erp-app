@@ -231,7 +231,7 @@ const [subView, setSubView] = useState("item_wise");
         </div>
       </div>
 
-{/* ===== FILTER BAR (ERP EXACT) ===== */}
+{/* ===== FILTER BAR  ===== */}
 <div className="flex items-center gap-3 mb-4">
 
   {/* FILTER (JOINED LIKE VALUATION) */}
@@ -286,7 +286,7 @@ const [subView, setSubView] = useState("item_wise");
   {/* RIGHT SIDE */}
   <div className="ml-auto flex items-center gap-3">
 
-    {/* VALUATION (ERP STYLE) */}
+    {/* VALUATION  */}
     <div className="flex items-center bg-white border border-[#cfd6e4]
                     rounded-md overflow-hidden h-[35px]">
 
