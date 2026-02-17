@@ -83,7 +83,7 @@ const DateFieldBox = ({ label, selected, onChange }) => {
   );
 };
 
-export default function SalesRegister() {
+export default function ContraRegister() {
   const gridRef = useRef(null);
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -138,7 +138,7 @@ const onGridReady = (params) => {
       {/* ================= HEADER ================= */}
       <div className="flex justify-between items-start mb-4">
         <h1 className="text-[26px] font-extrabold text-black">
-          Sale Register
+        Contra Register
         </h1>
 
         <div className="flex items-center gap-3 text-black">
@@ -151,7 +151,7 @@ const onGridReady = (params) => {
       </div>
 
       {/* ================= DATE + FILTER BAR ================= */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-4">
 
         <DateFieldBox label="From" selected={fromDate} onChange={setFromDate} />
         <DateFieldBox label="To" selected={toDate} onChange={setToDate} />
@@ -223,6 +223,16 @@ const onGridReady = (params) => {
 
         </div>
 
+          {/* Fixed Grid */}
+          <label className="flex items-center gap-2 text-[13px] font-bold">
+            <input
+              type="checkbox"
+              checked={fixedGrid}
+              onChange={() => setFixedGrid(!fixedGrid)}
+            />
+            Fixed Grid
+          </label>
+
         {/* Voucher Series Dropdown */}
         <div className="relative">
 
@@ -267,15 +277,7 @@ const onGridReady = (params) => {
         </div>
 
 
-          {/* Fixed Grid */}
-          <label className="flex items-center gap-2 text-[13px] font-bold">
-            <input
-              type="checkbox"
-              checked={fixedGrid}
-              onChange={() => setFixedGrid(!fixedGrid)}
-            />
-            Fixed Grid
-          </label>
+        
 
           {/* Back */}
           <button className="h-[38px] px-4 border border-primary text-primary font-bold rounded-md text-[13px]">
@@ -284,13 +286,6 @@ const onGridReady = (params) => {
         </div>
       </div>
 
-      {/* Consolidated Checkbox */}
-      <div className="mb-3">
-        <label className="flex items-center gap-2 text-[13px] font-bold">
-          <input type="checkbox" />
-          Consolidated In All Branches
-        </label>
-      </div>
 
 {/* ================= GRID ================= */}
 <div className="bg-white border border-[#d9dee7] rounded-md overflow-hidden">

@@ -83,7 +83,7 @@ const DateFieldBox = ({ label, selected, onChange }) => {
   );
 };
 
-export default function SalesRegister() {
+export default function PaymentRegister() {
   const gridRef = useRef(null);
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -138,7 +138,7 @@ const onGridReady = (params) => {
       {/* ================= HEADER ================= */}
       <div className="flex justify-between items-start mb-4">
         <h1 className="text-[26px] font-extrabold text-black">
-          Sale Register
+        Payment Register
         </h1>
 
         <div className="flex items-center gap-3 text-black">

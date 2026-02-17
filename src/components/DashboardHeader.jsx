@@ -501,6 +501,160 @@ const [openBranch, setOpenBranch] = useState(false);
                                   }
 
 
+                                  // ✅ PURCHASE REGISTER LINK
+                                  if (
+                                    item.key === "register" &&
+                                    section.title === "INWARDS" &&
+                                    label === "Purchase Register"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/register/purchase-register"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Purchase Register
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  // ✅ SALES RETURN REGISTER LINK
+                                if (
+                                  item.key === "register" &&
+                                  section.title === "OUTWARD" &&
+                                  label === "Sales Return Register"
+                                ) {
+                                  return (
+                                    <li key={j}>
+                                      <Link
+                                        to="/company/dashboard/register/sales-return-register"
+                                        className="hover:text-primary font-bold"
+                                        onClick={() => setOpenMegaMenu(null)}
+                                      >
+                                        Sales Return Register
+                                      </Link>
+                                    </li>
+                                  );
+                                }
+
+                                // ✅ PURCHASE RETURN REGISTER LINK
+                              if (
+                                item.key === "register" &&
+                                section.title === "INWARDS" &&
+                                label === "Purchase Return Register"
+                              ) {
+                                return (
+                                  <li key={j}>
+                                    <Link
+                                      to="/company/dashboard/register/purchase-return-register"
+                                      className="hover:text-primary font-bold"
+                                      onClick={() => setOpenMegaMenu(null)}
+                                    >
+                                      Purchase Return Register
+                                    </Link>
+                                  </li>
+                                );
+                              }
+
+                              // ✅ PAYMENT REGISTER LINK
+                                if (
+                                  item.key === "register" &&
+                                  section.title === "VOUCHER" &&
+                                  label === "Payment Register"
+                                ) {
+                                  return (
+                                    <li key={j}>
+                                      <Link
+                                        to="/company/dashboard/register/payment-register"
+                                        className="hover:text-primary font-bold"
+                                        onClick={() => setOpenMegaMenu(null)}
+                                      >
+                                        Payment Register
+                                      </Link>
+                                    </li>
+                                  );
+                                }
+
+                                // ✅ RECEIPT REGISTER LINK
+                                  if (
+                                    item.key === "register" &&
+                                    section.title === "VOUCHER" &&
+                                    label === "Receipt Register"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/register/receipt-register"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Receipt Register
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  // ✅ CONTRA REGISTER
+                                  if (
+                                    item.key === "register" &&
+                                    section.title === "VOUCHER" &&
+                                    label === "Contra Register"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/register/contra-register"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Contra Register
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  // ✅ JOURNAL REGISTER
+                                  if (
+                                    item.key === "register" &&
+                                    section.title === "VOUCHER" &&
+                                    label === "Journal Register"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/register/journal-register"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Journal Register
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+                                  // ✅ OTHER ACC REGISTER
+                                  if (
+                                    item.key === "register" &&
+                                    section.title === "VOUCHER" &&
+                                    label === "Other Acc. Register"
+                                  ) {
+                                    return (
+                                      <li key={j}>
+                                        <Link
+                                          to="/company/dashboard/register/other-acc-register"
+                                          className="hover:text-primary font-bold"
+                                          onClick={() => setOpenMegaMenu(null)}
+                                        >
+                                          Other Acc. Register
+                                        </Link>
+                                      </li>
+                                    );
+                                  }
+
+
+
 
                                   if (
                                     item.key === "masters" &&
@@ -794,6 +948,44 @@ const [openBranch, setOpenBranch] = useState(false);
                                               onClick={() => setOpenMegaMenu(null)}
                                             >
                                               GST Summary
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      // ✅ ACCOUNT SUMMARY
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === "Accounts" &&
+                                        label === "Account Summary"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/account-summary"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Account Summary
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      // ✅ STOCK SUMMARY
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === "STOCK" &&
+                                        label === "Stock Summary"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/stock-summary"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Stock Summary
                                             </Link>
                                           </li>
                                         );

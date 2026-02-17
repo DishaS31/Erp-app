@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
@@ -83,7 +84,9 @@ const DateFieldBox = ({ label, selected, onChange }) => {
   );
 };
 
-export default function SalesRegister() {
+export default function MemorandumRegister() {
+
+ const navigate = useNavigate(); 
   const gridRef = useRef(null);
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -95,6 +98,7 @@ export default function SalesRegister() {
   const [toDate, setToDate] = useState(new Date("2026-02-14"));
   const [fixedGrid, setFixedGrid] = useState(false);
   const [openVoucherSeries, setOpenVoucherSeries] = useState(false);
+  const [openAddOns, setOpenAddOns] = useState(false);
   const [showDatePopup, setShowDatePopup] = useState(false);
 
 
@@ -112,11 +116,17 @@ export default function SalesRegister() {
     },
     { headerName: "NARRATION", field: "narration", flex: 1 },
   ], []);
+
+
   useEffect(() => {
-  const close = () => setOpenVoucherSeries(false);
+  const close = () => {
+    setOpenVoucherSeries(false);
+    setOpenAddOns(false);
+  };
   window.addEventListener("click", close);
   return () => window.removeEventListener("click", close);
 }, []);
+
 
 const onGridReady = (params) => {
   const api = params.api;
@@ -138,7 +148,7 @@ const onGridReady = (params) => {
       {/* ================= HEADER ================= */}
       <div className="flex justify-between items-start mb-4">
         <h1 className="text-[26px] font-extrabold text-black">
-          Sale Register
+          Memorandum Register
         </h1>
 
         <div className="flex items-center gap-3 text-black">
@@ -151,7 +161,7 @@ const onGridReady = (params) => {
       </div>
 
       {/* ================= DATE + FILTER BAR ================= */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-2 mb-4">
 
         <DateFieldBox label="From" selected={fromDate} onChange={setFromDate} />
         <DateFieldBox label="To" selected={toDate} onChange={setToDate} />
@@ -175,12 +185,12 @@ const onGridReady = (params) => {
           GO
         </button>
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-2">
 
         <div className="flex items-stretch h-[40px] border border-[#cbd5e1] rounded-md overflow-hidden bg-white">
 
         {/* LEFT LABEL */}
-        <div className="px-5 bg-[#f1f5f9] flex items-center text-tiny  font-semibold text-[#334155] border-r border-[#cbd5e1]">
+        <div className="px-3 bg-[#f1f5f9] flex items-center text-tiny  font-semibold text-[#334155] border-r border-[#cbd5e1]">
             View
         </div>
 
@@ -201,27 +211,51 @@ const onGridReady = (params) => {
 
         </div>
 
-        <div className="flex items-stretch h-[40px] border border-[#cbd5e1] rounded-md overflow-hidden bg-white">
+ 
 
-        <div className="px-5 bg-[#f1f5f9] flex items-center text-tiny  font-semibold text-[#334155] border-r border-[#cbd5e1]">
-            Vouchers
-        </div>
+        {/* Add Ons Dropdown */}
+            <div className="relative">
 
-        <div className="relative flex items-center">
-            <select
-            className="appearance-none px-5 pr-10 h-full text-tiny font-semibold text-[#1e293b] outline-none bg-white"
+            <button
+                onClick={(e) => {
+                e.stopPropagation();
+                setOpenAddOns(!openAddOns);
+                setOpenVoucherSeries(false); // optional but better UX
+                }}
+                className="h-[38px] px-3 bg-primary text-white font-bold rounded-md text-tiny flex items-center gap-1"
             >
-            <option>All</option>
-              <option value="draft">Draft Vouchers</option>
-              <option value="optional">Optional Vouchers</option>
-            </select>
+                Add Ons
+                <Icon name="expand_more" className="text-[18px]" />
+            </button>
 
-            <span className="absolute right-3 pointer-events-none material-symbols-outlined text-[18px] text-gray-600">
-            expand_more
-            </span>
-        </div>
+            {openAddOns && (
+                <div
+                className="
+                    absolute right-0 mt-2
+                    w-[220px]
+                    bg-white
+                    border border-[#cbd5e1]
+                    rounded-md
+                    shadow-lg
+                    z-50
+                    overflow-hidden
+                "
+                >
+                <button className="w-full text-left px-4 py-3 text-[14px] hover:bg-[#f3f6fb]">
+                    Action
+                </button>
 
-        </div>
+                <button className="w-full text-left px-4 py-3 text-[14px] hover:bg-[#f3f6fb]">
+                    Another action
+                </button>
+
+                <button className="w-full text-left px-4 py-3 text-[14px] hover:bg-[#f3f6fb]">
+                    Something else here
+                </button>
+                </div>
+            )}
+            </div>
+
 
         {/* Voucher Series Dropdown */}
         <div className="relative">
@@ -230,9 +264,10 @@ const onGridReady = (params) => {
             onClick={(e) => {
             e.stopPropagation();
             setOpenVoucherSeries(!openVoucherSeries);
+            setOpenAddOns(false);
             }}
 
-            className="h-[38px] px-4 bg-primary text-white font-bold rounded-md text-[13px] flex items-center gap-1"
+            className="h-[38px] px-4 bg-primary text-white font-bold rounded-md text-tiny flex items-center gap-1"
         >
             Voucher Series
             <Icon name="expand_more" className="text-[18px]" />
@@ -268,7 +303,7 @@ const onGridReady = (params) => {
 
 
           {/* Fixed Grid */}
-          <label className="flex items-center gap-2 text-[13px] font-bold">
+          <label className="flex items-center gap-2 text-tiny font-bold">
             <input
               type="checkbox"
               checked={fixedGrid}
@@ -278,18 +313,14 @@ const onGridReady = (params) => {
           </label>
 
           {/* Back */}
-          <button className="h-[38px] px-4 border border-primary text-primary font-bold rounded-md text-[13px]">
-            Back
-          </button>
-        </div>
-      </div>
+        <button
+        onClick={() => navigate(-1)}
+        className="h-[38px] px-4 border border-primary text-primary font-bold rounded-md text-[13px] transition hover:bg-primary hover:text-white"
+        >
+        Back
+        </button>
 
-      {/* Consolidated Checkbox */}
-      <div className="mb-3">
-        <label className="flex items-center gap-2 text-[13px] font-bold">
-          <input type="checkbox" />
-          Consolidated In All Branches
-        </label>
+        </div>
       </div>
 
 {/* ================= GRID ================= */}

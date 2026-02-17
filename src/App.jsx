@@ -81,6 +81,23 @@ import BillByBill from "./pages/Dashboard/Masters/BillByBill";
 import SubLedger from "./pages/Dashboard/Masters/SubLedger";
 import BulkUpdation from "./pages/Dashboard/Masters/BulkUpdation";
 import SalesRegister from "./pages/Dashboard/Register/SalesRegister";
+import PurchaseRegister from "./pages/Dashboard/Register/PurchaseRegister";
+import SalesReturnRegister from "./pages/Dashboard/Register/SalesReturnRegister";
+import PurchaseReturnRegister from "./pages/Dashboard/Register/PurchaseReturnRegister";
+import PaymentRegister from "./pages/Dashboard/Register/PaymentRegister";
+import ReceiptRegister from "./pages/Dashboard/Register/ReceiptRegister";
+import ContraRegister from "./pages/Dashboard/Register/ContraRegister";
+import JournalRegister from "./pages/Dashboard/Register/JournalRegister";
+import OtherRegisters from "./pages/Dashboard/Register/OtherRegisters";
+import MemorandumRegister from "./pages/Dashboard/Register/MemorandumRegister";
+import OptionalRegister from "./pages/Dashboard/Register/OptionalRegister";
+import SystemJournalRegister from "./pages/Dashboard/Register/SystemJournalRegister";
+import AccountSummary from "./pages/Dashboard/Reports/AccountSummary";
+import AccountSummaryView from "./pages/Dashboard/Reports/AccountSummaryView";
+import StockSummary from "./pages/Dashboard/Reports/StockSummary";
+import StockSummaryView from "./pages/Dashboard/Reports/StockSummaryView";
+
+
 
 
 
@@ -176,6 +193,22 @@ const App = () => {
         <Route path="masters/sub-ledger" element={<SubLedger />}/>
         <Route path="masters/bulk-updation" element={<BulkUpdation />}/>
         <Route path="register/sales-register"  element={<SalesRegister />}/>
+        <Route path="register/purchase-register" element={<PurchaseRegister />}/>
+        <Route path="register/sales-return-register"  element={<SalesReturnRegister />}/>
+        <Route path="register/purchase-return-register"  element={<PurchaseReturnRegister />}/>
+        <Route path="register/payment-register"  element={<PaymentRegister />}/>
+        <Route path="register/receipt-register" element={<ReceiptRegister />}/>
+        <Route path="register/contra-register" element={<ContraRegister />} />
+        <Route path="register/journal-register" element={<JournalRegister />} />
+        <Route path="register/other-acc-register" element={<OtherRegisters />}/>
+        <Route path="register/memorandum-register"  element={<MemorandumRegister />}/>
+        <Route path="register/optional-register" element={<OptionalRegister />} />
+        <Route path="register/system-journal-register" element={<SystemJournalRegister />} />
+        <Route path="reports/account-summary" element={<AccountSummary />} />
+        <Route path="reports/account-summary/view" element={<AccountSummaryView />} />
+        <Route path="reports/stock-summary" element={<StockSummary />} />
+        <Route path="reports/stock-summary/view" element={<StockSummaryView />} />
+
 
 
 
