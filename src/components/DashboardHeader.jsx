@@ -991,6 +991,97 @@ const [openBranch, setOpenBranch] = useState(false);
                                         );
                                       }
 
+                                      if (
+                                        item.key === "gst" &&
+                                        section.title === " PERIODIC" &&
+                                        label === "Outward Supplies (R1/ CMP08)"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/gst/outward-supplies"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Outward Supplies (R1/ CMP08)
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      // ✅ E-WAY LINK
+                                      if (
+                                        item.key === "gst" &&
+                                        section.title === " E-Way / E-Invoice " &&
+                                        label === "Manage E-Way "
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/gst/e-way"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Manage E-Way
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      if (
+                                        item.key === "gst" &&
+                                        section.title === " E-Way / E-Invoice " &&
+                                        label === "Manage E-Invoice"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/gst/e-invoice"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Manage E-Invoice
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === " BOOKS" &&
+                                        label === "Cost Centre"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/cost-centre-preopen"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Cost Centre
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
+
+                                      // ✅ BILLS MANAGEMENT
+                                      if (
+                                        item.key === "reports" &&
+                                        section.title === "Accounts" &&
+                                        label === "Bills Management"
+                                      ) {
+                                        return (
+                                          <li key={j}>
+                                            <Link
+                                              to="/company/dashboard/reports/bills-management-preopen"
+                                              className="hover:text-primary font-bold"
+                                              onClick={() => setOpenMegaMenu(null)}
+                                            >
+                                              Bills Management
+                                            </Link>
+                                          </li>
+                                        );
+                                      }
 
 
 

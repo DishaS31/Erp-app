@@ -96,9 +96,18 @@ import AccountSummary from "./pages/Dashboard/Reports/AccountSummary";
 import AccountSummaryView from "./pages/Dashboard/Reports/AccountSummaryView";
 import StockSummary from "./pages/Dashboard/Reports/StockSummary";
 import StockSummaryView from "./pages/Dashboard/Reports/StockSummaryView";
-
-
-
+import OutwardSupplies from "./pages/Dashboard/GST/OutwardSupplies";
+import Gstr1Report from "./pages/Dashboard/GST/Gstr1Report";
+import EGstr1Summary from "./pages/Dashboard/GST/EGstr1Summary";
+import EWay from "./pages/Dashboard/GST/EWay";
+import EWaySummary from "./pages/Dashboard/GST/EWaySummary";
+import EInvoice from "./pages/Dashboard/GST/EInvoice";
+import EInvoiceSummary from "./pages/Dashboard/GST/EInvoiceSummary";
+import CostCentrePreOpen from "./pages/Dashboard/Reports/CostCentrePreOpen";
+import BillsManagementPreOpen from "./pages/Dashboard/Reports/BillsManagementPreOpen";
+import AccountWiseBillStatement from "./pages/Dashboard/Reports/AccountWiseBillStatement";
+import BillWiseStatementOneAccount from "./pages/Dashboard/Reports/BillWiseStatementOneAccount";
+import BillWiseStatement from "./pages/Dashboard/Reports/BillWiseStatement";
 
 
 
@@ -208,11 +217,18 @@ const App = () => {
         <Route path="reports/account-summary/view" element={<AccountSummaryView />} />
         <Route path="reports/stock-summary" element={<StockSummary />} />
         <Route path="reports/stock-summary/view" element={<StockSummaryView />} />
-
-
-
-
-
+        <Route path="gst/outward-supplies" element={<OutwardSupplies />} />
+        <Route path="gst/gstr1-report" element={<Gstr1Report />} />
+        <Route path="gst/gstr1-preview" element={<EGstr1Summary />} />
+        <Route path="gst/e-way" element={<EWay />} />
+        <Route path="gst/e-way-summary" element={<EWaySummary />} />
+        <Route path="gst/e-invoice" element={<EInvoice />} />
+        <Route path="gst/e-invoice-summary" element={<EInvoiceSummary />} />
+        <Route path="reports/cost-centre-preopen"  element={<CostCentrePreOpen />}/>
+        <Route path="reports/bills-management-preopen"  element={<BillsManagementPreOpen />}/>
+        <Route path="reports/bills_management_accounts" element={<AccountWiseBillStatement />}/>
+        <Route path="reports/bills_management_one_account" element={<BillWiseStatementOneAccount />}/>
+        <Route path="reports/bills_management_statement"  element={<BillWiseStatement />}/>
 
         
 
