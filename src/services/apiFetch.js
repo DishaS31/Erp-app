@@ -2,6 +2,18 @@ import { getSesKey, isSessionValid, saveSession } from "./sessionStore";
 
 const API_BASE_URL = "https://erp.aicountly.com/api"; // ✅ static domain
 
+const LOGIN_REDIRECT_URL = "https://my.aicountly.com";
+
+function redirectToBooksLogin() {
+  // session clear
+  localStorage.removeItem("ses_key");
+  localStorage.removeItem("ses_expiry");
+  localStorage.removeItem("selected_company_id");
+
+  // redirect
+  window.location.href = LOGIN_REDIRECT_URL;
+}
+
 let isRefreshing = false;
 let refreshPromise = null;
 
@@ -14,10 +26,11 @@ export async function apiFetch(url, options = {}) {
   const sesKey = getSesKey();
 
   // ✅  null  → refresh fail
-  if (!sesKey) {
-    console.error("ses_key missing ❌");
-    throw new Error("Unauthorized");
-  }
+ if (!sesKey) {
+  console.error("ses_key missing ❌");
+  redirectToBooksLogin();
+  return;
+}
 
   // ✅ base url auto attach
   const finalUrl = url.startsWith("http")
@@ -33,10 +46,11 @@ export async function apiFetch(url, options = {}) {
     credentials: "include",
   });
 
-  if (res.status === 401) {
-    console.error("API 401 even after seskey refresh ❌");
-    throw new Error("Unauthorized");
-  }
+if (res.status === 401) {
+  console.error("API 401 even after seskey refresh ❌");
+  redirectToBooksLogin();
+  return;
+}
 
   return res.json();
 }
@@ -55,10 +69,11 @@ async function refreshSesKey() {
         credentials: "include",
       });
 
-      if (!res.ok) {
-        console.error("SESKEY refresh failed ❌");
-        return;
-      }
+    if (!res.ok) {
+      console.error("SESKEY refresh failed ❌");
+      redirectToBooksLogin();
+      return;
+    }
 
       const data = await res.json();
 
@@ -70,6 +85,7 @@ async function refreshSesKey() {
 
       if (!newKey) {
         console.error("ses_key missing in response ❌", data);
+        redirectToBooksLogin();
         return;
       }
 

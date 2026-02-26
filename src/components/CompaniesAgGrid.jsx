@@ -10,12 +10,14 @@ import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { apiFetch } from "../services/apiFetch";
+import { useNavigate } from "react-router-dom";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
  {
   const gridRef = useRef(null);
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(25);
@@ -264,7 +266,13 @@ export default function CompaniesAgGrid({ filter = "all", onSelectCompany })
 
             onSelectCompany?.(selected);
           }}
+          onRowDoubleClicked={(params) => {
+            const selected = params.data;
+            if (!selected?.comp_id) return;
 
+            localStorage.setItem("selected_company_id", String(selected.comp_id));
+            navigate("/company/dashboard");
+          }}
 
         />
       </div>

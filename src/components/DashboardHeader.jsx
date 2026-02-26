@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import { useEffect, useState, useRef  } from "react";
 import { Link } from "react-router-dom";
-
-
 import logo from "../assets/logo.png";
 import homeIcon from "../assets/home.png";
 import userAvatar from "../assets/user.jpg";
@@ -15,6 +13,7 @@ import icon6 from "../assets/icon6.png";
 import icon7 from "../assets/e-sahayak-slogo.png";
 
 import { setTheme } from "../utils/theme";
+import { apiFetch } from "../services/apiFetch";
 
 
 const MEGA_MENU_DATA = {
@@ -153,6 +152,7 @@ const MEGA_MENU_DATA = {
 
 
 const DashboardHeader = () => {
+  
 
   const themes = [
     { key: "red", color: "#dd0026" },
@@ -170,7 +170,7 @@ const DashboardHeader = () => {
       iconType: "image",
       icon: homeIcon,
       type: "internal",
-      path: "/",
+      path: "/company/dashboard",
     },
    {
   label: "Masters",
@@ -220,11 +220,69 @@ const DashboardHeader = () => {
   const [openMegaMenu, setOpenMegaMenu] = useState(null);
   const [openFY, setOpenFY] = useState(false);
 const [openBranch, setOpenBranch] = useState(false);
+const [companyInfo, setCompanyInfo] = useState(null);
+const [activeBranchId, setActiveBranchId] = useState(null);
 
 
+const megaMenuRef = useRef(null);
 
-  
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      megaMenuRef.current &&
+      !megaMenuRef.current.contains(event.target)
+    ) {
+      setOpenMegaMenu(null);
+    }
+  };
 
+  if (openMegaMenu) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [openMegaMenu]);
+
+
+useEffect(() => {
+  const loadCompanyInfo = async () => {
+    const compId = localStorage.getItem("selected_company_id");
+    if (!compId) return;
+
+    try {
+      const res = await apiFetch(
+        `/companyinfo?comp_id=${compId}`,
+        { method: "GET" }
+      );
+
+      console.log("COMPANY INFO ✅", res);
+
+      if (res?.success === "1") {
+        setCompanyInfo(res.data);   // ✅ IMPORTANT FIX
+      }
+    } catch (err) {
+      console.error("Company info fetch failed ❌", err);
+    }
+  };
+
+  loadCompanyInfo();
+}, []);
+
+
+useEffect(() => {
+  if (companyInfo?.branch_list?.length) {
+    const savedBranch = localStorage.getItem("selected_branch_id");
+
+    if (savedBranch) {
+      setActiveBranchId(Number(savedBranch));
+    } else {
+      // first branch default
+      setActiveBranchId(companyInfo.branch_list[0].id);
+    }
+  }
+}, [companyInfo]);
 
 
   return (
@@ -249,7 +307,7 @@ const [openBranch, setOpenBranch] = useState(false);
         {/* CENTER NAV */}
         <nav className="flex items-center gap-2 text-tiny font-bold text-secondary">
           {navItems.map((item, index) => (
-            <div key={index} className="relative group">
+            <div key={index} className="relative group" ref={openMegaMenu === item.key ? megaMenuRef : null}>
 
               {/* HOME */}
               {item.iconType === "image" && (
@@ -293,7 +351,6 @@ const [openBranch, setOpenBranch] = useState(false);
                 {openMegaMenu === item.key && (
                   <div
                     className="fixed left-0 top-[50px] w-screen bg-white border-t-4 border-primary shadow-md z-40"
-                    onClick={() => setOpenMegaMenu(null)}
                   >
                     <div className="max-w-[1400px] mx-auto px-5 py-8">
                       <div className="grid grid-cols-5 gap-12 text-sm">
@@ -1133,7 +1190,15 @@ const [openBranch, setOpenBranch] = useState(false);
                   }
         >
           <span className="whitespace-nowrap italic">
-            Hsush (25-26 | HO)
+            {companyInfo?.comp_name || "-"} 
+            (
+            {companyInfo?.fy_start?.slice(0, 4) || "-"} - 
+            {companyInfo?.fy_end?.slice(0, 4) || "-"} 
+            | 
+            {
+              companyInfo?.branch_list?.find(b => b.id === activeBranchId)?.name || "-"
+            }
+            )
           </span>
 
           <span className="material-symbols-outlined ">
@@ -1418,10 +1483,15 @@ const [openBranch, setOpenBranch] = useState(false);
                   <div className="h-full overflow-y-auto text-[#525B75]">
 
                     {/* HEADER */}
-                    <div className="text-center py-3 ">
-                      <div className="text-tiny font-bold text-black">Hsush</div>
+                    <div className="text-center py-3">
+                      <div className="text-tiny font-bold text-black">
+                        {companyInfo?.comp_name || "-"}
+                      </div>
+
                       <div className="text-tiny font-semibold text-black">
-                        GSTIN: 123, Branch: HO, Comp ID: 7
+                        GSTIN: {companyInfo?.gstin || "-"}, 
+                        Branch: {companyInfo?.branch_list?.[0]?.name || "-"}, 
+                        Comp ID: {companyInfo?.comp_id || "-"}
                       </div>
                     </div>
 
@@ -1454,20 +1524,39 @@ const [openBranch, setOpenBranch] = useState(false);
                     </div>
 
                     {/* FY DROPDOWN (SMOOTH) */}
-                    <div
-                      className={`overflow-hidden transition-all duration-300 ease-in-out
-                        ${openFY ? "max-h-32" : "max-h-0"}
-                      `}
-                    >
-                      <div className="flex justify-between items-center px-2 py-0 bg-[#cbd0dd]  text-[#3e465b] text-tiny font-extrabold">
-                        <span>2025 - 26 (01 Apr, 2025 - 31 Mar, 2026)</span>
-                        <span className="text-primary text-xl">★</span>
-                      </div>
+                      <div
+                        className={`overflow-hidden transition-all duration-300 ease-in-out
+                          ${openFY ? "max-h-40" : "max-h-0"}
+                        `}
+                      >
+                        {/* Active FY Row */}
+                        <div className="flex justify-between items-center px-3 py-2 
+                                        bg-[#d9dde5] text-[#3e465b] text-tiny font-extrabold">
+                          
+                          <span>
+                            {companyInfo?.fy_start?.slice(0,4)} -{" "}
+                            {companyInfo?.fy_end?.slice(2,4)} 
+                            ({new Date(companyInfo?.fy_start).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric"
+                            })} -{" "}
+                            {new Date(companyInfo?.fy_end).toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric"
+                            })})
+                          </span>
 
-                      <div className="px-6 py-1 border-dashed border-b border-[#ccc] cursor-pointer text-[#3e465b] text-tiny font-bold">
-                        Add New FY
+                          <span className="text-green-600 text-xl">★</span>
+                        </div>
+
+                        {/* Add New FY */}
+                        <div className="px-4 py-2 border-dashed border-b border-[#ccc] 
+                                        cursor-pointer text-[#3e465b] text-tiny font-bold hover:bg-gray-50">
+                          Add New FY
+                        </div>
                       </div>
-                    </div>
 
                     {/* Rewrite Books */}
                     <div className="flex items-center gap-3 px-4  py-1 pt-3 border-dashed border-b border-[#ccc] cursor-pointer text-tiny text-[#3e465b]">
@@ -1502,13 +1591,36 @@ const [openBranch, setOpenBranch] = useState(false);
                     {/* BRANCH DROPDOWN (SMOOTH) */}
                     <div
                       className={`overflow-hidden transition-all duration-300 ease-in-out
-                        ${openBranch ? "max-h-16" : "max-h-0"}
+                        ${openBranch ? "max-h-60" : "max-h-0"}
                       `}
                     >
-                      <div className="flex justify-between items-center px-2 py-0 bg-[#cbd0dd]  text-[#3e465b] text-tiny font-extrabold">
-                        <span>HO (HO)</span>
-                        <span className="text-primary text-xl">★</span>
-                      </div>
+                      {companyInfo?.branch_list?.map((branch) => {
+                        const isActive = branch.id === activeBranchId;
+
+                        return (
+                          <div
+                            key={branch.id}
+                            onClick={() => {
+                              setActiveBranchId(branch.id);
+                              localStorage.setItem("selected_branch_id", branch.id);
+                            }}
+                            className={`
+                              flex justify-between items-center px-3 py-2
+                              text-tiny cursor-pointer border-b border-dashed border-[#ccc]
+                              ${isActive
+                                ? "bg-[#d9dde5] font-extrabold"
+                                : "bg-white hover:bg-gray-50"
+                              }
+                            `}
+                          >
+                            <span className="font-bold">{branch.name}</span>
+
+                            {isActive && (
+                              <span className="text-green-600 text-xl">★</span>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {/* Close Company */}

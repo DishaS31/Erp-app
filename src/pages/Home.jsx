@@ -185,9 +185,21 @@ const handleConfirmPermanentDelete = async () => {
               New Company
             </NavLink>
 
-            <button className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow">
-              Open Company
-            </button>
+              <button
+                className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow"
+                    onClick={() => {
+                      const id = localStorage.getItem("selected_company_id");
+
+                      if (!id) {
+                        alert("Please select a company first!");
+                        return;
+                      }
+
+                      navigate("/company/dashboard");
+                    }}
+              >
+                Open Company
+              </button>
 
             <button
                 className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow"
@@ -233,7 +245,19 @@ const handleConfirmPermanentDelete = async () => {
               Remove Access
             </button>
 
-            <button className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow">
+            <button
+              className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow"
+                onClick={() => {
+                  const id = localStorage.getItem("selected_company_id");
+
+                  if (!id) {
+                    alert("Please select a company first!");
+                    return;
+                  }
+
+                  navigate("/company/dashboard");
+                }}
+            >
               Open Company
             </button>
           </>
@@ -272,12 +296,7 @@ const handleConfirmPermanentDelete = async () => {
          )}
 
 
-        <button
-          className="btn px-6 py-2 text-tiny rounded-md bg-primary text-white font-bold shadow"
-          onClick={() => navigate("/company/dashboard")}
-        >
-          Go Dashboard
-        </button>
+       
 
       </div>
 

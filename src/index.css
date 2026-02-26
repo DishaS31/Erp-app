@@ -443,3 +443,18 @@ body{
 .units-grid .ag-cell input[type="checkbox"] {
   margin: 0 !important;
 }
+
+/* 🔥 FULL CELL COVERAGE FIX */
+.ag-theme-alpine .ag-cell-inline-editing {
+  padding: 0 !important;
+}
+
+.ag-theme-alpine .ag-cell-inline-editing input,
+.ag-theme-alpine .ag-cell-inline-editing .ag-input-field-input {
+  height: 100% !important;
+  width: 100% !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 8px !important;
+  box-sizing: border-box;
+}

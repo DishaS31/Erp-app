@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState,useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
@@ -6,6 +6,7 @@ import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { apiFetch } from "../../../services/apiFetch";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -93,8 +94,10 @@ export default function DayBook() {
   const gridRef = useRef(null);
 
   /* ===== DATE ===== */
-  const [fromDate, setFromDate] = useState(new Date("2026-01-01"));
-  const [toDate, setToDate] = useState(new Date("2026-01-30"));
+  const [financialYearStart, setFinancialYearStart] = useState(2025); 
+// means FY 2025-26
+  const [fromDate, setFromDate] = useState(new Date("2026-02-01"));
+  const [toDate, setToDate] = useState(new Date("2026-02-26"));
   const [openVoucherSeries, setOpenVoucherSeries] = useState(false);
   const [showDatePopup, setShowDatePopup] = useState(false);
 
@@ -103,92 +106,31 @@ export default function DayBook() {
   /* ===== FILTER ===== */
   const [filterText, setFilterText] = useState("");
 
-  /* ===== GRID DATA (DUMMY FOR UI) ===== */
-  const rowData = useMemo(
-    () => [
-      {
-        date: "01-01-2026",
-        particulars: "CLIENT SERVICE MONEY",
-        voucher_type: "Receipt",
-        voucher_no: "1",
-        debit: "₹18,086.00",
-        credit: "",
-      },
-      {
-        date: "01-01-2026",
-        particulars: "SAVING INTEREST",
-        voucher_type: "Receipt",
-        voucher_no: "2",
-        debit: "₹127.00",
-        credit: "",
-      },
-      {
-        date: "01-01-2026",
-        particulars: "BANK CHARGES",
-        voucher_type: "Journal",
-        voucher_no: "3",
-        debit: "₹10,212.00",
-        credit: "₹10,212.00",
-      },
-      {
-        date: "01-01-2026",
-        particulars: "BANK CHARGES",
-        voucher_type: "Journal",
-        voucher_no: "4",
-        debit: "₹6.61",
-        credit: "₹6.61",
-      },
-      {
-        date: "01-01-2026",
-        particulars: "SUSPENSE",
-        voucher_type: "Journal",
-        voucher_no: "5",
-        debit: "₹10,000.00",
-        credit: "₹10,000.00",
-      },
-      {
-        date: "01-01-2026",
-        particulars: "FUEL, TOLL & PARKING CAR O",
-        voucher_type: "Journal",
-        voucher_no: "6",
-        debit: "₹14.00",
-        credit: "₹14.00",
-      },
-      {
-        date: "02-01-2026",
-        particulars: "HDFC OD LAS",
-        voucher_type: "Receipt",
-        voucher_no: "7",
-        debit: "₹20,000.00",
-        credit: "",
-      },
-      {
-        date: "02-01-2026",
-        particulars: "INDUSIND BANK 71715",
-        voucher_type: "Payment",
-        voucher_no: "8",
-        debit: "",
-        credit: "₹20,000.00",
-      },
-      {
-        date: "02-01-2026",
-        particulars: "SBI SAVING",
-        voucher_type: "Payment",
-        voucher_no: "9",
-        debit: "",
-        credit: "₹4,000.00",
-      },
-      {
-        date: "02-01-2026",
-        particulars: "SBI SAVING",
-        voucher_type: "Payment",
-        voucher_no: "10",
-        debit: "",
-        credit: "₹5,000.00",
-      },
-    ],
-    []
-  );
+const [rowData, setRowData] = useState([]);
+const [loading, setLoading] = useState(false);
+const [page, setPage] = useState(1);
+const [perPage, setPerPage] = useState(10);
+const [totalRecords, setTotalRecords] = useState(0);
+
+const formatDate = (date) => {
+  return date.toISOString().split("T")[0];
+};
+
+const formatDisplayDate = (date) => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+const startRecord =
+  totalRecords === 0 ? 0 : (page - 1) * perPage + 1;
+
+const endRecord =
+  totalRecords === 0
+    ? 0
+    : Math.min(page * perPage, totalRecords);
+
 
   /* ===== COLUMNS ===== */
   const columnDefs = useMemo(
@@ -237,6 +179,60 @@ export default function DayBook() {
     []
   );
 
+useEffect(() => {
+  fetchDayBook();
+}, [page, perPage]);
+
+  const fetchDayBook = async () => {
+  try {
+    setLoading(true);
+
+    const compId = localStorage.getItem("selected_company_id");
+
+    const payload = {
+      cmp_id: compId,
+      from_date: formatDate(fromDate),
+      to_date: formatDate(toDate),
+      pg_curpage: page,
+      pg_rpp: perPage,
+    };
+
+    const data = await apiFetch("/DayBook", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("DayBook API:", data);
+
+    const fullData = data?.data || data?.rows || [];
+
+const decodeHTML = (str) => {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  return txt.value;
+};
+
+const formatted = fullData.map((item) => ({
+  date: item.date || "-",
+  particulars: item.particulars || "-",
+  voucher_type: item.voucher_type || "-",
+  voucher_no: item.voucher_no || "-",
+  debit: item.debit ? decodeHTML(item.debit) : "",
+  credit: item.credit ? decodeHTML(item.credit) : "",
+}));
+
+    setRowData(formatted);
+    setTotalRecords(data?.totalRecords || 0);
+
+  } catch (err) {
+    console.error("DayBook error ❌", err);
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen bg-[#f5f6f8] px-10 py-4">
       {/* ================= HEADER ================= */}
@@ -282,7 +278,13 @@ export default function DayBook() {
       </button>
 
 
-        <button className="h-[35px] px-6 bg-primary text-white font-bold rounded-md text-tiny">
+        <button
+          onClick={() => {
+            setPage(1);
+            fetchDayBook();
+          }}
+          className="h-[35px] px-6 bg-primary text-white font-bold rounded-md text-tiny"
+        >
           GO
         </button>
 
@@ -418,6 +420,7 @@ export default function DayBook() {
 
 
         <AgGridReact
+        loading={loading}
           ref={gridRef}
           theme="legacy"
           rowData={rowData}
@@ -443,36 +446,35 @@ export default function DayBook() {
               ‹
             </button>
             <span>Page</span>
-            <input
-              value={1}
-              readOnly
-              className="w-[40px] h-[26px] border text-center rounded"
-            />
-            <span>of 5</span>
+              <input
+                value={page}
+                onChange={(e) => setPage(Number(e.target.value))}
+                className="w-[40px] h-[26px] border text-center rounded"
+              />
+            <span>
+              of {Math.ceil(totalRecords / perPage) || 1}
+            </span>
            <button className="text-[20px] font-bold px-2 opacity-60 hover:opacity-100">
               ›
             </button>
             <button className="text-[20px] font-bold px-2 opacity-60 hover:opacity-100">
               »
             </button>
-           <select
-              className="
-                ml-2 h-[28px] px-2
-                border border-[#cfd6e4]
-                rounded-md
-                text-[14px] font-semibold
-                bg-white
-              "
-            >
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
+              <select
+                value={perPage}
+                onChange={(e) => {
+                  setPerPage(Number(e.target.value));
+                  setPage(1);
+                }}
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+              </select>
 
           </div>
 
-          <div>Displaying 1 to 10 of 50 items.</div>
+          <div>Displaying {startRecord} to {endRecord} of {totalRecords} items.</div>
         </div>
       </div>
 
@@ -496,11 +498,29 @@ export default function DayBook() {
               {/* LEFT */}
               <div className="w-[55%]">
                 <div className="grid grid-cols-4 gap-2 text-tiny font-bold text-black">
-                  {["APR","JUL","OCT","JAN","MAY","AUG","NOV","FEB","JUN","SEP","DEC","MAR"].map(m => (
-                    <button key={m} className="h-[36px] bg-[#e2f6dc] rounded-md">
-                      {m}
-                    </button>
-                  ))}
+                  {["APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC","JAN","FEB","MAR"]
+                  .map((m, index) => {
+
+                    // FY starts from April (month index 3)
+                    const actualMonth = (index + 3) % 12;
+                    const yearAdjustment = index < 9 ? financialYearStart : financialYearStart + 1;
+
+                    return (
+                      <button
+                        key={m}
+                        onClick={() => {
+                          const start = new Date(yearAdjustment, actualMonth, 1);
+                          const end = new Date(yearAdjustment, actualMonth + 1, 0);
+
+                          setFromDate(start);
+                          setToDate(end);
+                        }}
+                        className="h-[36px] bg-[#e2f6dc] rounded-md"
+                      >
+                        {m}
+                      </button>
+                    );
+                  })}
                   {["Q1","Q2","Q3","Q4"].map(q => (
                     <button key={q} className="h-[36px] bg-[#bfeab1] rounded-md">
                       {q}
@@ -519,15 +539,37 @@ export default function DayBook() {
               {/* RIGHT */}
               <div className="w-[45%] space-y-3">
                 <div className="flex items-center h-[36px] border rounded-md bg-[#eff2f6]">
-                  <button className="w-[36px] h-full border-r text-[22px]">‹</button>
-                  <div className="flex-1 text-center font-bold text-tiny text-black">FY: 2025 - 26</div>
-                  <button className="w-[36px] h-full border-l text-[22px]">›</button>
+                  <button
+                   onClick={() => {
+                      const newFY = financialYearStart - 1;
+                      setFinancialYearStart(newFY);
+                      setFromDate(new Date(newFY, 3, 1));      // 1 April
+                      setToDate(new Date(newFY + 1, 2, 31));   // 31 March
+                    }}
+                    className="w-[36px] h-full border-r text-[22px]"
+                  >
+                    ‹
+                  </button>
+                  <div className="flex-1 text-center font-bold text-tiny text-black">
+                    FY: {financialYearStart} - {String(financialYearStart + 1).slice(-2)}
+                  </div>
+                    <button
+                      onClick={() => {
+                        const newFY = financialYearStart + 1;
+                        setFinancialYearStart(newFY);
+                        setFromDate(new Date(newFY, 3, 1));
+                        setToDate(new Date(newFY + 1, 2, 31));
+                      }}
+                      className="w-[36px] h-full border-l text-[22px]"
+                    >
+                      ›
+                    </button>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <label className="w-[55px] font-bold text-black">From</label>
                   <input
-                    value="01-01-2026"
+                    value={formatDisplayDate(fromDate)}
                     readOnly
                     className="flex-1 h-[36px] px-3 border rounded-md font-semibold text-tiny"
                   />
@@ -536,7 +578,7 @@ export default function DayBook() {
                 <div className="flex items-center gap-3">
                   <label className="w-[55px] font-bold text-black">To</label>
                   <input
-                    value="31-03-2026"
+                    value={formatDisplayDate(toDate)}
                     readOnly
                     className="flex-1 h-[36px] px-3 border rounded-md font-semibold text-tiny"
                   />
@@ -553,7 +595,11 @@ export default function DayBook() {
             {/* FOOTER */}
             <div className="flex justify-center gap-4 mt-4">
               <button
-                onClick={() => setShowDatePopup(false)}
+               onClick={() => {
+                setShowDatePopup(false);
+                setPage(1);
+                fetchDayBook();
+              }}
                 className="px-8 py-2 bg-[#1aa10a] text-white rounded-md font-bold"
               >
                 GO

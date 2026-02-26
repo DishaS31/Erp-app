@@ -28,12 +28,47 @@ useEffect(() => {
   // 🔥 RESET every time editor opens
   selectedItemRef.current = null;
 
+  // ✅ If editing started by typing, capture the first key
+  const firstKey =
+    props.eventKey &&
+    props.eventKey.length === 1 && // only normal characters
+    !props.eventKey.ctrlKey &&
+    !props.eventKey.metaKey &&
+    !props.eventKey.altKey
+      ? props.eventKey
+      : "";
+
   if (props.value?.id) {
-    setValue(props.value.name);
-    console.log("✅ INIT - Editor with value:", props.value);
+    // If there is an existing value AND user started by typing, start from that key (Excel-like replace)
+    // If you want "append" behavior instead, use: `${props.value.name}${firstKey}`
+    const initial = firstKey ? firstKey : props.value.name;
+
+    setValue(initial);
+    console.log("✅ INIT - Editor with value:", props.value, "| firstKey:", firstKey);
+
+    // Optional: open dropdown immediately if firstKey present
+    if (initial.length >= 1) {
+      const filteredItems = ITEM_MASTER.filter((item) =>
+        item.name.toLowerCase().includes(initial.toLowerCase())
+      ).slice(0, 50);
+
+      setList(filteredItems);
+      setActiveIndex(0);
+    }
   } else {
-    setValue("");
-    console.log("🆕 INIT - Fresh editor");
+    const initial = firstKey; // 🔥 this is the main fix for fresh cells
+    setValue(initial);
+    console.log("🆕 INIT - Fresh editor | firstKey:", firstKey);
+
+    // Optional: open dropdown immediately if firstKey present
+    if (initial.length >= 1) {
+      const filteredItems = ITEM_MASTER.filter((item) =>
+        item.name.toLowerCase().includes(initial.toLowerCase())
+      ).slice(0, 50);
+
+      setList(filteredItems);
+      setActiveIndex(0);
+    }
   }
 
   return () => {
@@ -61,7 +96,7 @@ useEffect(() => {
 
     if (v.length >= 1) {
       const filteredItems = ITEM_MASTER.filter(item =>
-        item.name.toLowerCase().startsWith(v.toLowerCase())
+        item.name.toLowerCase().includes(v.toLowerCase())
       ).slice(0, 50);
 
       setList(filteredItems);
@@ -297,79 +332,57 @@ const suppressKeyboardEvent = (params) => {
   if (event.key !== "Enter") return false;
 
   const isEditing = api.getEditingCells().length > 0;
-  const currentCellId = `${node.rowIndex}-${column.getColId()}`;
-  const lastCellId = lastFocusedCellRef.current;
 
-  console.log("🔑 Enter pressed:", { currentCellId, lastCellId, isEditing });
-
-  // 🔒 CASE 1: Not editing yet → FIRST Enter (only focus, don't edit)
-  if (!isEditing && lastCellId !== currentCellId) {
-    console.log("📍 FIRST ENTER - Just focus, no edit");
-    event.preventDefault();
-    lastFocusedCellRef.current = currentCellId; // Mark this cell as focused
-    // Don't start editing, just suppress the default
-    return true; // Suppress default edit behavior
+  // ✅ STEP 1: If NOT editing → allow default edit start
+  if (!isEditing) {
+    return false; // let ag-Grid start editing
   }
 
-  // ✏️ CASE 2: Second Enter on SAME cell → start editing
-  if (!isEditing && lastCellId === currentCellId) {
-    console.log("✏️ SECOND ENTER - Start editing");
-    event.preventDefault();
-    lastFocusedCellRef.current = null; // Reset flag
-    
-    api.startEditingCell({
-      rowIndex: node.rowIndex,
-      colKey: column.getColId(),
-    });
-    return true; // Suppress default (we started manually)
-  }
-
-  // ➡️ CASE 3: Already editing → move to NEXT cell (only focus, no edit)
-  console.log("➡️ THIRD ENTER - Move to next cell (focus only)");
+  // From here we are in EDIT MODE
   event.preventDefault();
-  lastFocusedCellRef.current = null; // Reset flag
+
+  // stop editing first
+  api.stopEditing();
 
   const editableCols = columnDefs.filter((c) => c.editable);
-  const idx = editableCols.findIndex(
+  const colIndex = editableCols.findIndex(
     (c) => c.field === column.getColId()
   );
 
-  const nextCol = editableCols[idx + 1];
+  const field = column.getColId();
+  const rowData = node.data || {};
 
-  if (nextCol) {
-    // Just focus the next cell, don't start editing
-    lastFocusedCellRef.current = `${node.rowIndex}-${nextCol.field}`;
-    api.setFocusedCell(node.rowIndex, nextCol.field);
+  let isEmpty = false;
+
+  if (field === "item") {
+    isEmpty = !rowData.item || !rowData.item.name;
   } else {
-    // Move to first editable column in next row (focus only)
-    const nextRowIndex = node.rowIndex + 1;
-    const totalRows = api.getDisplayedRowCount();
-
-    // SPECIAL CASE: if the CURRENT row's ALL editable cells are empty,
-    // pressing Enter on the last editable cell should focus the Bill Sundry grid instead of moving to next row.
-    const currentRowNode = api.getDisplayedRowAtIndex(node.rowIndex);
-    const currentRowData = currentRowNode?.data || {};
-    const allEmptyCurrentRow = editableCols.every((c) => {
-      const v = currentRowData[c.field];
-      if (c.field === "item") {
-        return !v || !v.name;
-      }
-      return v === undefined || v === null || v === "";
-    });
-
-    if (allEmptyCurrentRow && billGridRef?.current?.api) {
-      // Focus Bill Sundry grid first cell (no edit)
-      billGridRef.current.api.setFocusedCell(0, "bill_name");
-      return true;
-    }
-
-    if (nextRowIndex < totalRows) {
-      lastFocusedCellRef.current = `${nextRowIndex}-${editableCols[0].field}`;
-      api.setFocusedCell(nextRowIndex, editableCols[0].field);
-    }
+    isEmpty =
+      rowData[field] === "" ||
+      rowData[field] === null ||
+      rowData[field] === undefined;
   }
 
-  return true; // Suppress default navigation
+  // ✅ EMPTY → BILL GRID
+  if (isEmpty) {
+    billGridRef.current?.api?.setFocusedCell(0, "bill_name");
+    return true;
+  }
+
+  // ✅ FILLED → NEXT CELL
+  const nextCol = editableCols[colIndex + 1];
+
+  if (nextCol) {
+    api.setFocusedCell(node.rowIndex, nextCol.field);
+    return true;
+  }
+
+  const nextRow = node.rowIndex + 1;
+  if (api.getDisplayedRowAtIndex(nextRow)) {
+    api.setFocusedCell(nextRow, editableCols[0].field);
+  }
+
+  return true;
 };
 
 
@@ -378,45 +391,45 @@ const suppressBillKeyboardEvent = (params) => {
   const { event, api, node, column } = params;
 
   if (event.key !== "Enter") return false;
+
+  const isEditing = api.getEditingCells().length > 0;
+
+  // ✅ Not editing → allow default edit start
+  if (!isEditing) {
+    return false;
+  }
+
   event.preventDefault();
 
-  const billEditableCols = ["bill_name", "amount"];
-  const currentColId = column.getColId();
-  const colIndex = billEditableCols.indexOf(currentColId);
-
-  const rowData = node.data || {};
-  const allEmpty =
-    (!rowData.bill_name || rowData.bill_name === "") &&
-    (!rowData.amount || rowData.amount === "");
-
-  // 👉 FIRST ENTER → start editing
-  if (api.getEditingCells().length === 0) {
-    api.startEditingCell({
-      rowIndex: node.rowIndex,
-      colKey: currentColId,
-    });
-    return true;
-  }
-
-  // stop editing before navigation
   api.stopEditing();
 
-  // 👉 LAST CELL + BOTH EMPTY → SAVE button focus
-  if (colIndex === billEditableCols.length - 1 && allEmpty) {
+  const billEditableCols = ["bill_name", "amount"];
+  const colIndex = billEditableCols.indexOf(column.getColId());
+
+  const field = column.getColId();
+  const rowData = node.data || {};
+
+  const isEmpty =
+    rowData[field] === "" ||
+    rowData[field] === null ||
+    rowData[field] === undefined;
+
+  // EMPTY → SAVE BUTTON
+  if (isEmpty) {
     setTimeout(() => {
       saveBtnRef.current?.focus();
-    }, 50);
+    }, 0);
     return true;
   }
 
-  // 👉 normal next column
+  // FILLED → NEXT CELL
   const nextCol = billEditableCols[colIndex + 1];
+
   if (nextCol) {
     api.setFocusedCell(node.rowIndex, nextCol);
     return true;
   }
 
-  // 👉 next row first column
   const nextRow = node.rowIndex + 1;
   if (api.getDisplayedRowAtIndex(nextRow)) {
     api.setFocusedCell(nextRow, billEditableCols[0]);
@@ -424,7 +437,6 @@ const suppressBillKeyboardEvent = (params) => {
 
   return true;
 };
-
 
 // 🔥 DELETE LOGIC HELPERS
 const editableFields = [

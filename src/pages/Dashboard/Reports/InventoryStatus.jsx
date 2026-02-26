@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
@@ -6,6 +6,7 @@ import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { apiFetch } from "../../../services/apiFetch";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -58,9 +59,14 @@ const IconBtn = ({ icon, tooltip }) => {
 
 
 /* ===== CHECK ===== */
-const CheckItem = ({ label }) => (
+const CheckItem = ({ label, checked, onChange }) => (
   <label className="flex items-center gap-2 text-tiny font-bold text-[#525b75]">
-    <input type="checkbox" className="h-[18px] w-[18px] accent-[#1aa10a]" />
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      className="h-[18px] w-[18px] accent-[#1aa10a]"
+    />
     {label}
   </label>
 );
@@ -81,75 +87,218 @@ export default function InventoryStatus() {
 
 
   /* ===== DATE ===== */
-  const [fromDate, setFromDate] = useState(new Date("2026-01-01"));
-  const [toDate, setToDate] = useState(new Date("2026-01-28"));
+  const [fromDate, setFromDate] = useState(new Date("2026-02-01"));
+  const [toDate, setToDate] = useState(new Date("2026-02-25"));
   const [showDatePopup, setShowDatePopup] = useState(false);
   
 
+  const [showInwards, setShowInwards] = useState(false);
+  const [showOutwards, setShowOutwards] = useState(false);
+  const [showOpening, setShowOpening] = useState(false);
+  const [showProfit, setShowProfit] = useState(false);
+  const [showHSN, setShowHSN] = useState(false);
+  const [fixedGrid, setFixedGrid] = useState(false);
+
 
   /* ===== PAGINATION (UI ONLY) ===== */
-  const [page] = useState(0);
-  const [perPage] = useState(10);
+const [page, setPage] = useState(1);
+const [perPage, setPerPage] = useState(10);
+const [totalRecords, setTotalRecords] = useState(0);
+const [totalValuation, setTotalValuation] = useState(0);
 
   /* ===== FILTER STATE ===== */
 const [filterText, setFilterText] = useState("");
 const [filterField, setFilterField] = useState("item");
 const [filterCondition, setFilterCondition] = useState("contains");
-const [valuation, setValuation] = useState("valuation");
+const [valuation, setValuation] = useState("avg");
 const [subView, setSubView] = useState("item_wise");
+const [fyId, setFyId] = useState(219);
 
 
   /* ===== GRID ===== */
   const gridRef = useRef(null);
-  const rowData = useMemo(() => [], []);
+const [rowData, setRowData] = useState([]);
+const [loading, setLoading] = useState(false);
+
+useEffect(() => {
+  fetchInventoryStatus();
+}, [valuation, page, perPage, fyId]);
 
   /* ===== COLUMN DEFINITIONS (ERP MATCH) ===== */
-  const columnDefs = useMemo(
-    () => [
+const columnDefs = useMemo(() => {
+  const cols = [
+
+     {
+      headerName: "No.",
+      width: 50,
+      pinned: "left",
+      headerClass: "inv-header",
+      cellClass: "text-center",
+      valueGetter: (params) => {
+        return (page - 1) * perPage + params.node.rowIndex + 1;
+      },
+      resizable: fixedGrid,
+    },
+    {
+      headerName: "Item",
+       field: "item_name",
+      flex: 2,
+      minWidth: 200,
+      headerClass: "inv-header",
+      resizable: fixedGrid,
+    },
+  ];
+
+  // ✅ HSN COLUMN (Item HSN checkbox)
+  if (showHSN) {
+    cols.push({
+      headerName: "HSN",
+      field: "Itemhsn",
+      minWidth: 120,
+      headerClass: "inv-header",
+      resizable: fixedGrid,
+    });
+  }
+
+  cols.push({
+    headerName: "Unit",
+    field: "unit_name",
+    minWidth: 120,
+    headerClass: "inv-header",
+    resizable: fixedGrid,
+  });
+
+  if (showOpening) {
+    cols.push({
+      headerName: "OPENING",
+      marryChildren: true,
+      headerClass: "inv-header-center",
+      children: [
+        {
+          headerName: "OP. Qty",
+          field: "op_item_qty",
+          minWidth: 150,
+          headerClass: "inv-sub-header",
+          cellClass: "text-right",
+          resizable: fixedGrid,
+        },
+        {
+          headerName: "Value",
+          field: "op_item_value",
+          minWidth: 150,
+          headerClass: "inv-sub-header",
+          cellClass: "text-right",
+          resizable: fixedGrid,
+        },
+      ],
+    });
+  }
+
+  if (showInwards) {
+    cols.push({
+      headerName: "INWARDS",
+      marryChildren: true,
+      headerClass: "inv-header-center",
+      children: [
+        {
+          headerName: "Qty",
+          field: "inward_qty",
+          minWidth: 150,
+          headerClass: "inv-sub-header",
+          cellClass: "text-right",
+          resizable: fixedGrid,
+        },
+        {
+          headerName: "Amount",
+          field: "inward_amount",
+          minWidth: 150,
+          headerClass: "inv-sub-header",
+          cellClass: "text-right",
+          resizable: fixedGrid,
+        },
+      ],
+    });
+  }
+
+  if (showOutwards) {
+    cols.push({
+      headerName: "OUTWARDS",
+      marryChildren: true,
+      headerClass: "inv-header-center",
+      children: [
+        {
+          headerName: "Qty",
+          field: "outward_qty",
+          minWidth: 150,
+          headerClass: "inv-sub-header",
+          cellClass: "text-right",
+          resizable: fixedGrid,
+        },
+        {
+          headerName: "Amount",
+          field: "outward_amount",
+          minWidth: 150,
+          headerClass: "inv-sub-header",
+          cellClass: "text-right",
+          resizable: fixedGrid,
+        },
+      ],
+    });
+  }
+
+  // ✅ ALWAYS AVAILABLE
+  cols.push({
+    headerName: "AVAILABLE",
+    marryChildren: true,
+    headerClass: "inv-header-center",
+    children: [
       {
-        headerName: "Item",
-        field: "item",
-        flex: 2,
-        
-        minWidth: 140,
-        headerClass: "inv-header",
+        headerName: "CL. Qty",
+        field: "item_qty_avail",
+        minWidth: 150,
+        headerClass: "inv-sub-header",
+        cellClass: "text-right",
+        resizable: fixedGrid,
       },
       {
-        headerName: "Unit",
-        field: "unit",
-        minWidth: 240,
-        headerClass: "inv-header",
-      },
-      {
-        headerName: "AVAILABLE",
-        marryChildren: true,
-        headerClass: "inv-header-center",
-        children: [
-          {
-            headerName: "CL. Qty",
-            field: "cl_qty",
-            minWidth: 260,
-            headerClass: "inv-sub-header",
-            cellClass: "text-right",
-          },
-          {
-            headerName: "Value",
-            field: "value",
-            minWidth: 260,
-            headerClass: "inv-sub-header",
-            cellClass: "text-right",
-          },
-        ],
-      },
-      {
-        headerName: "Method",
-        field: "method",
-        minWidth: 260,
-        headerClass: "inv-header",
+        headerName: "Value",
+        field: "item_value_avail",
+        minWidth: 150,
+        headerClass: "inv-sub-header",
+        cellClass: "text-right",
+        resizable: fixedGrid,
       },
     ],
-    []
-  );
+  });
+
+  if (showProfit) {
+    cols.push({
+      headerName: "Profit",
+      field: "profit",
+      minWidth: 150,
+      headerClass: "inv-header",
+      cellClass: "text-right",
+      resizable: fixedGrid,
+    });
+  }
+
+  cols.push({
+    headerName: "Method",
+    field: "method",
+    minWidth: 180,
+    headerClass: "inv-header",
+    resizable: fixedGrid,
+  });
+
+  return cols;
+}, [
+  showOpening,
+  showInwards,
+  showOutwards,
+  showProfit,
+  showHSN,
+  fixedGrid,
+]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -159,6 +308,56 @@ const [subView, setSubView] = useState("item_wise");
     }),
     []
   );
+
+  const fetchInventoryStatus = async () => {
+  try {
+    setLoading(true);
+
+    const payload = {
+      bo_id: 184,
+      fy_id: fyId,
+      show_opening: showOpening ? 1 : 0,
+      show_inwards: showInwards ? 1 : 0,
+      show_outwards: showOutwards ? 1 : 0,
+      show_profit: showProfit ? 1 : 0,
+      show_itmhsn: showHSN ? 1 : 0,
+      val_id: valuation?.toUpperCase() || "AVG",
+      to_date: toDate.toISOString().split("T")[0],
+      pg_curpage: page,
+      pg_rpp: perPage,
+      cmp_id: 140,
+    };
+
+    const data = await apiFetch("/InventoryStatus", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("Inventory API:", data);
+
+   
+    const fullData = data?.data || data?.rows || [];
+
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+
+    setRowData(fullData.slice(startIndex, endIndex));
+      setTotalRecords(
+    data?.totalRecords ||
+    data?.data?.totalRecords ||
+    0
+  );
+  setTotalValuation(data?.valuationSummary?.total_valuation || 0);
+
+  } catch (err) {
+    console.error("Inventory error ❌", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#f5f6f8] px-10 py-4">
@@ -207,18 +406,45 @@ const [subView, setSubView] = useState("item_wise");
           <Icon name="date_range" className="text-[20px]" />
         </button>
 
-        <button className="h-[35px] px-6 bg-primary text-white font-bold rounded-md text-tiny">
+        <button
+            onClick={() => { fetchInventoryStatus(); }}
+          className="h-[35px] px-6 bg-primary text-white font-bold rounded-md text-tiny"
+        >
           GO
         </button>
 
 
         <div className="flex gap-4 ml-4 flex-wrap">
-          <CheckItem label="Inwards" />
-          <CheckItem label="Outwards" />
-          <CheckItem label="Fixed Grid" />
-          <CheckItem label="Item HSN" />
-          <CheckItem label="Opening Balance" />
-          <CheckItem label="Profit" />
+          <CheckItem
+            label="Inwards"
+            checked={showInwards}
+            onChange={() => setShowInwards(!showInwards)}
+          />
+          <CheckItem
+            label="Outwards"
+            checked={showOutwards}
+            onChange={() => setShowOutwards(!showOutwards)}
+          />
+          <CheckItem
+            label="Fixed Grid"
+            checked={fixedGrid}
+            onChange={() => setFixedGrid(!fixedGrid)}
+          />
+          <CheckItem
+            label="Item HSN"
+            checked={showHSN}
+            onChange={() => setShowHSN(!showHSN)}
+          />
+          <CheckItem
+            label="Opening Balance"
+            checked={showOpening}
+            onChange={() => setShowOpening(!showOpening)}
+          />
+          <CheckItem
+            label="Profit"
+            checked={showProfit}
+            onChange={() => setShowProfit(!showProfit)}
+          />
         </div>
 
         <div className="ml-auto flex gap-3">
@@ -322,7 +548,7 @@ const [subView, setSubView] = useState("item_wise");
         className="px-4 h-full outline-none text-[13px] font-semibold bg-white"
       >
         <option value="item_wise">Item Wise</option>
-        <option value="group_wise">Group Wise</option>
+        
       </select>
     </div>
 
@@ -345,6 +571,7 @@ const [subView, setSubView] = useState("item_wise");
               "rgb(var(--color-primary) / 0.12)",
             }}>
           <AgGridReact
+            loading={loading}
             ref={gridRef}
              theme="legacy"
             rowData={rowData}
@@ -358,44 +585,87 @@ const [subView, setSubView] = useState("item_wise");
             suppressMovableColumns
             rowSelection="single"
             pagination={false}
+            onGridReady={(params) => {
+              gridRef.current = params.api;
+              
+            }}
           />
         </div>
 
       
         {/* PAGINATION (ERP LOOK) */}
-        <div className="flex items-center gap-3 px-4 py-2 border-t text-[14px] text-[#374151]">
-          <button className="text-gray-400 text-xl">«</button>
-          <button className="text-gray-400 text-xl">‹</button>
+      <div className="flex items-center gap-3 px-4 py-2 border-t text-[14px] text-[#374151]">
 
-          <span>Page</span>
-          <input
-            value={page}
-            readOnly
-            className="w-[42px] h-[28px] border rounded text-center"
-          />
-          <span>of 0</span>
+        <button
+          onClick={() => page > 1 && setPage(1)}
+          className="text-gray-500 text-xl"
+        >
+          «
+        </button>
 
-          <button className="text-gray-400 text-xl">›</button>
-          <button className="text-gray-400 text-xl">»</button>
+        <button
+          onClick={() => page > 1 && setPage(page - 1)}
+          className="text-gray-500 text-xl"
+        >
+          ‹
+        </button>
 
-          <select
-            value={perPage}
-            readOnly
-            className="ml-2 h-[28px] border rounded px-2"
-          >
-            <option>10</option>
-          </select>
-        </div>
+        <span>Page</span>
+
+        <input
+          value={page}
+          onChange={(e) => setPage(Number(e.target.value))}
+          className="w-[42px] h-[28px] border rounded text-center"
+        />
+
+        <span>
+          of {Math.ceil(totalRecords / perPage) || 1}
+        </span>
+
+        <button
+          onClick={() =>
+            page < Math.ceil(totalRecords / perPage) &&
+            setPage(page + 1)
+          }
+          className="text-gray-500 text-xl"
+        >
+          ›
+        </button>
+
+        <button
+          onClick={() =>
+            page < Math.ceil(totalRecords / perPage) &&
+            setPage(Math.ceil(totalRecords / perPage))
+          }
+          className="text-gray-500 text-xl"
+        >
+          »
+        </button>
+
+      <select
+        value={perPage}
+        onChange={(e) => {
+          const newSize = Number(e.target.value);
+          setPerPage(newSize);
+          setPage(1);
+        }}
+        className="ml-2 h-[28px] border rounded px-2"
+      >
+        <option value={10}>10</option>
+        <option value={25}>25</option>
+        <option value={50}>50</option>
+      </select>
+      </div>
       </div>
 
       {/* ===== TOTAL ===== */}
       <div className="mt-4 bg-white border border-[#cfd6e4] rounded-md p-4 flex items-center gap-4">
         <span className="text-base font-extrabold">Total Valuation:</span>
         <span className="bg-[#3b6cff] text-white px-4 py-1 rounded-md text-xl font-extrabold">
-          ₹ 0.00
+          ₹ {totalValuation.toLocaleString()}
         </span>
         <span className="text-tiny bg-black text-white px-2 py-[2px] rounded">
-          AVG
+          {valuation?.toUpperCase()}
         </span>
       </div>
 
@@ -453,11 +723,21 @@ const [subView, setSubView] = useState("item_wise");
 
               {/* FY */}
               <div className="flex items-center h-[36px] border border-[#cfd6e4] rounded-md overflow-hidden bg-[#eff2f6]">
-                <button className="w-[36px] h-full border-r text-[25px]">‹</button>
-                <div className="flex-1 text-center text-[14px] font-bold">
-                  FY: 2025 - 26
-                </div>
-                <button className="w-[36px] h-full border-l text-[25px]">›</button>
+                  <button
+                    onClick={() => setFyId(prev => prev - 1)}
+                    className="w-[36px] h-full border-r text-[25px]"
+                  >
+                    ‹
+                  </button>
+                    <div className="flex-1 text-center text-[14px] font-bold">
+                      FY: {fyId}
+                    </div>
+                      <button
+                        onClick={() => setFyId(prev => prev + 1)}
+                        className="w-[36px] h-full border-l text-[25px]"
+                      >
+                        ›
+                      </button>
               </div>
 
               {/* FROM */}
@@ -492,7 +772,10 @@ const [subView, setSubView] = useState("item_wise");
           {/* FOOTER */}
           <div className="flex justify-center gap-4 mt-4">
             <button
-              onClick={() => setShowDatePopup(false)}
+               onClick={() => {
+                    setShowDatePopup(false);
+                    fetchInventoryStatus();   // ✅ only here API hit
+                  }}
               className="px-8 py-2 bg-[#1aa10a] text-white rounded-md text-[14px] font-bold"
             >
               GO
